@@ -84,7 +84,7 @@
 <script setup>
 import { reactive, onMounted } from "vue";
 
-const emit = defineEmits(["closePopup"]); //ccn truyền qua cha dùng emit
+const emit = defineEmits(["closePopup"]); //con truyền qua cha dùng emit
 const hiheModel = () => {
     emit("closePopup");
 };
@@ -102,9 +102,7 @@ const props = defineProps({
     },
 });
 onMounted(() => {
-    // state.form.datetime_start = props.dates + "T00:00";
-    // state.form.datetime_end = props.dates + "T00:00";
-
+    //lay all trong proos
     state.form = props.eventget;
     // state.form.is_event = props.eventget.is_event;
     // state.form.description = props.eventget.description;
@@ -114,6 +112,7 @@ onMounted(() => {
 });
 const state = reactive({
     form: {
+        id: null,
         title: "",
         is_event: 1,
         datetime_start: "",

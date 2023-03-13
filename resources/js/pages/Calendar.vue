@@ -9,10 +9,12 @@
                     <img src="@/img/calendar_20_2x.png" alt="" />
                 </label>
                 <span class="container-header-left__title">Lịch</span>
-                <button>Hôm nay</button>
-                <i class="fa-solid fa-angle-left"></i>
-                <i class="fa-solid fa-angle-right"></i>
-                <span class="container-header-left__today">Tháng 2, 2023</span>
+                <button @click="goToDay()">Hôm nay</button>
+                <i class="fa-solid fa-angle-left" @click="preMonth()"></i>
+                <i class="fa-solid fa-angle-right" @click="nextMonth()"></i>
+                <span class="container-header-left__today">{{
+                    state.presentMonth
+                }}</span>
             </div>
             <div class="container__header--right">
                 <div class="container-header-right__icon">
@@ -94,7 +96,11 @@
                 </div>
 
                 <div class="container-body-left__canlendar">
-                    <FullCalender v-bind:options="options" />
+                    <FullCalender
+                        v-bind:options="options"
+                        ref="calendar"
+                        id="calender"
+                    />
                 </div>
                 <div class="container-body-left__list-event">
                     <div class="list-event__title list-event__input">
@@ -148,9 +154,9 @@ import listGridPlugin from "@fullcalendar/list";
 import multiMonthPlugin from "@fullcalendar/multimonth";
 import interactionPlugin from "@fullcalendar/interaction";
 import EventModel from "@/components/EventModel.vue";
-import { useInsertionEffect } from "preact/compat";
+
 const id = ref(10);
-const fullcalendar = ref(null);
+const calendar = ref(null);
 
 const options = reactive({
     events: [],
@@ -186,11 +192,8 @@ const options = reactive({
         });
     },
     eventClick: function (info) {
-        state.isOpenPopupCreate = true;
-        console.log(info);
-        // console.log(info.event.backgroundColor);
-        // console.log(info.event.extendedProps.end_date);
         state.itemEvent = {
+            id: info.event.extendedProps.event_id,
             title: info.event.title,
             is_event: info.event.extendedProps.is_event,
             description: info.event.extendedProps.description,
@@ -198,9 +201,11 @@ const options = reactive({
             datetime_end: info.event.extendedProps.end_date,
             color: info.event?.backgroundColor,
         };
+        state.isOpenPopupCreate = true;
     },
     dateClick: function (info) {
         state.itemEvent = {
+            id: null,
             title: "",
             is_event: true,
             description: "",
@@ -209,7 +214,6 @@ const options = reactive({
             color: "",
         };
         state.isOpenPopupCreate = true;
-        console.log(info);
     },
     eventDidMount: function (info) {
         if (!info.event.extendedProps.is_event) {
@@ -221,7 +225,12 @@ const options = reactive({
             const title = info.el.querySelector(".fc-event-title");
             title.innerHTML = `<i class="fa-regular fa-calendar"></i></i></i><span class="name_remider">${info.event.title}</span>`;
         }
-        console.log(info);
+    },
+    datesSet: function (dateInfo) {
+        // state.presentMonth
+        // defaultView: 'title',
+        state.presentMonth = dateInfo.start;
+        console.log(dateInfo);
     },
 });
 
@@ -229,6 +238,7 @@ const state = reactive({
     isOpenPopupCreate: false,
     is_event: false,
     itemEvent: {},
+    presentMonth: "March 2023",
 });
 
 const selectEvent = () => {
@@ -243,23 +253,34 @@ const selectEvent = () => {
                     start: item.start_date,
                     end: item.end_date ? item.end_date : item.start_date,
                     color: item.is_event ? item.color : "#3F51B5",
+                    event_id: item.id,
                 });
             });
             console.log(events);
             options.events = events;
         });
 };
+
+const goToDay = () => {
+    calendar.value.getApi().today();
+};
+const preMonth = () => {
+    calendar.value.getApi().prev();
+};
+const nextMonth = () => {
+    calendar.value.getApi().next();
+};
 const choseday = () => {
-    fullcalendar.value.getApi().changeView("timeGridDay");
+    calendar.value.getApi().changeView("timeGridDay");
 };
 const chosewwek = () => {
-    fullcalendar.value.getApi().changeView("timeGridWeek");
+    calendar.value.getApi().changeView("timeGridWeek");
 };
 const chosemonth = () => {
-    fullcalendar.value.getApi().changeView("dayGridMonth");
+    calendar.value.getApi().changeView("dayGridMonth");
 };
 const choseyear = () => {
-    fullcalendar.value.getApi().changeView("multiMonthYear");
+    calendar.value.getApi().changeView("multiMonthYear");
 };
 
 onMounted(() => {

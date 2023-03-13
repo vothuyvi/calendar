@@ -17,6 +17,7 @@ class EventController extends Controller
             
             ]);
             $validator->after(function($validator) use ($request){
+
                 if ($request->is_event==1) {
                     if (!$request->datetime_end) {
                         $validator->errors()->add('datetime_end', 'The datetime end field is required.');
@@ -35,6 +36,11 @@ class EventController extends Controller
             }
             else {
                 $event = new Event();
+                
+                if ( $request->id) {
+                    $event = Event::where('id', $request->id)->first();
+                }
+                
                 $event->title = $request->title;
                 $event->is_event = $request->is_event;
                 $event->start_date = $request->datetime_start;
@@ -44,6 +50,7 @@ class EventController extends Controller
                 $event->save();
                 $msg="Success!";
                 return ResponseApi::notifis($msg);
+
             }   
         }catch (\Exception $e) {
             return ResponseApi::fails("Fail!");
