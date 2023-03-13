@@ -1,0 +1,30 @@
+{
+    "private": true,
+    "scripts": {
+        "dev": "vite",
+        "build": "vite build"
+    },
+    "devDependencies": {
+        "axios": "^1.1.2",
+        "laravel-vite-plugin": "^0.7.2",
+        "sass": "^1.58.3",
+        "vite": "^4.0.0"
+    },
+    "dependencies": {
+        "@fullcalendar/core": "^6.1.4",
+        "@fullcalendar/daygrid": "^6.1.4",
+        "@fullcalendar/interaction": "^6.1.4",
+        "@fullcalendar/list": "^6.1.4",
+        "@fullcalendar/multimonth": "^6.1.4",
+        "@fullcalendar/timegrid": "^6.1.4",
+        "@fullcalendar/vue3": "^6.1.4",
+        "@vitejs/plugin-vue": "^4.0.0",
+        "node-sass": "^8.0.0",
+        "vue": "^3.2.47",
+        "vue-fullcalendar": "^1.0.9",
+        "vue-router": "^4.1.6",
+        "vue3-datepicker": "^0.3.4",
+        "vue3-timepicker": "^1.0.0-beta.2",
+        "vuex": "^4.1.0"
+    }
+}
