@@ -82,9 +82,10 @@
 </template>
 
 <script setup>
+import axios from "axios";
 import { reactive, onMounted } from "vue";
 
-const emit = defineEmits(["closePopup"]); //con truyền qua cha dùng emit
+const emit = defineEmits(["closePopup", "getAllEvent"]); //con truyền qua cha dùng emit
 const hiheModel = () => {
     emit("closePopup");
 };
@@ -102,13 +103,8 @@ const props = defineProps({
     },
 });
 onMounted(() => {
-    //lay all trong proos
+    //lay all trong props
     state.form = props.eventget;
-    // state.form.is_event = props.eventget.is_event;
-    // state.form.description = props.eventget.description;
-    // state.form.datetime_start = props.eventget.datetime_start;
-    // state.form.datetime_end = props.eventget.datetime_end;
-    // state.form.color = props.eventget.color;
 });
 const state = reactive({
     form: {
@@ -123,15 +119,21 @@ const state = reactive({
     error: "",
     success: "",
 });
+/**
+ * add event
+ * @author Vi
+ */
 const addEvent = () => {
     axios
-        .post(import.meta.env.VITE_API_PUBLIC_KEY + "api/event", state.form)
+        .post(import.meta.env.VITE_API_PUBLIC_KEY + "api/add-event", state.form)
         .then((response) => {
             const {
                 data: { events },
             } = response;
             console.log(events);
             state.error = null;
+            emit("getAllEvent");
+            emit("closePopup");
         })
         .catch((error) => {
             console.log(error);

@@ -37,7 +37,7 @@ class EventController extends Controller
             else {
                 $event = new Event();
                 
-                if ( $request->id) {
+                if ($request->id) {
                     $event = Event::where('id', $request->id)->first();
                 }
                 
@@ -64,4 +64,6 @@ class EventController extends Controller
             return ResponseApi::success($events, $messge);
         
     }
+
+    
 }

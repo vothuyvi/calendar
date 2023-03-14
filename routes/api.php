@@ -10,13 +10,9 @@ Route::group(['namespace' => 'App\Http\Controllers'], function()
 
 
     // Route::group(['middleware' => 'auth:api'], function () {
-        Route::post('event','EventController@addevent');
+        Route::post('add-event','EventController@addevent');
         Route::get('select-event','EventController@selectEvent');
     // });
 });
 
 
-
-// Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
-//     return $request->user();
-// });

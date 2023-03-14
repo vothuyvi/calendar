@@ -13,7 +13,7 @@
                 <i class="fa-solid fa-angle-left" @click="preMonth()"></i>
                 <i class="fa-solid fa-angle-right" @click="nextMonth()"></i>
                 <span class="container-header-left__today">{{
-                    state.presentMonth
+                    renderTitle(state.presentMonth)
                 }}</span>
             </div>
             <div class="container__header--right">
@@ -96,10 +96,25 @@
                 </div>
 
                 <div class="container-body-left__canlendar">
+                    <div class="container-body-left__canlendar--title">
+                        <span class="container-header-left__today">
+                            {{ renderTitle(state.presentMonthSmall) }}</span
+                        >
+                        <div>
+                            <i
+                                class="fa-solid fa-angle-left"
+                                @click="preMonthSmall()"
+                            ></i>
+                            <i
+                                class="fa-solid fa-angle-right"
+                                @click="nextMonthSmall()"
+                            ></i>
+                        </div>
+                    </div>
+
                     <FullCalender
-                        v-bind:options="options"
-                        ref="calendar"
-                        id="calender"
+                        v-bind:options="optionCalanderSmall"
+                        ref="calendarSmall"
                     />
                 </div>
                 <div class="container-body-left__list-event">
@@ -135,36 +150,38 @@
             :options="options"
             :eventget="state.itemEvent"
             @close-popup="state.isOpenPopupCreate = false"
+            @get-all-event="selectEvent()"
         />
     </div>
 </template>
 
 <style lang="scss" scoped>
-@import "@/style/calender.scss";
+@import '@/style/calender.scss';
 </style>
 
 <script setup>
-import { ref, reactive, onMounted } from "vue";
-import axios from "axios";
-import "@fullcalendar/core";
-import FullCalender from "@fullcalendar/vue3";
-import dayGridPlugin from "@fullcalendar/daygrid";
-import timeGridPlugin from "@fullcalendar/timegrid";
-import listGridPlugin from "@fullcalendar/list";
-import multiMonthPlugin from "@fullcalendar/multimonth";
-import interactionPlugin from "@fullcalendar/interaction";
-import EventModel from "@/components/EventModel.vue";
+import { ref, reactive, onMounted } from 'vue';
+import axios from 'axios';
+import '@fullcalendar/core';
+import FullCalender from '@fullcalendar/vue3';
+import dayGridPlugin from '@fullcalendar/daygrid';
+import timeGridPlugin from '@fullcalendar/timegrid';
+import listGridPlugin from '@fullcalendar/list';
+import multiMonthPlugin from '@fullcalendar/multimonth';
+import interactionPlugin from '@fullcalendar/interaction';
+import EventModel from '@/components/EventModel.vue';
 
 const id = ref(10);
 const calendar = ref(null);
+const calendarSmall = ref(null);
 
 const options = reactive({
     events: [],
-    title: "",
-    datetime_start: "",
-    datetime_end: "",
-    description: "",
-    color: "",
+    title: '',
+    datetime_start: '',
+    datetime_end: '',
+    description: '',
+    color: '',
     isEvent: true,
     plugins: [
         dayGridPlugin,
@@ -173,8 +190,8 @@ const options = reactive({
         multiMonthPlugin,
         interactionPlugin,
     ],
-    initialView: "dayGridMonth",
-
+    timeZone: 'UTC',
+    initialView: 'dayGridMonth',
     editable: true,
     selectable: true,
     weekends: true,
@@ -206,31 +223,55 @@ const options = reactive({
     dateClick: function (info) {
         state.itemEvent = {
             id: null,
-            title: "",
+            title: '',
             is_event: true,
-            description: "",
-            datetime_start: info.dateStr + "T00:00",
-            datetime_end: info.dateStr + "T00:00",
-            color: "",
+            description: '',
+            datetime_start: info.dateStr + 'T00:00',
+            datetime_end: info.dateStr + 'T00:00',
+            color: '',
         };
         state.isOpenPopupCreate = true;
     },
     eventDidMount: function (info) {
         if (!info.event.extendedProps.is_event) {
-            info.el.classList.add("reminder");
-            const title = info.el.querySelector(".fc-event-title");
+            info.el.classList.add('reminder');
+            const title = info.el.querySelector('.fc-event-title');
             title.innerHTML = `<i class="fa-regular fa-hand-pointer"></i></i><span class="name_remider">${info.event.title}</span>`;
         } else {
             info.el.style.backgroundColor = info.event.backgroundColor;
-            const title = info.el.querySelector(".fc-event-title");
+            const title = info.el.querySelector('.fc-event-title');
             title.innerHTML = `<i class="fa-regular fa-calendar"></i></i></i><span class="name_remider">${info.event.title}</span>`;
         }
     },
     datesSet: function (dateInfo) {
-        // state.presentMonth
-        // defaultView: 'title',
-        state.presentMonth = dateInfo.start;
-        console.log(dateInfo);
+        const numberOfDayToAdd = 10;
+        const nextDay = new Date(dateInfo.start.getTime());
+        nextDay.setDate(dateInfo.start.getDate() + numberOfDayToAdd);
+        state.presentMonth = nextDay;
+        state.presentMonthSmall = nextDay;
+        calendarSmall.value.getApi().gotoDate(nextDay);
+    },
+});
+
+const optionCalanderSmall = reactive({
+    events: [],
+    plugins: [
+        dayGridPlugin,
+        timeGridPlugin,
+        listGridPlugin,
+        multiMonthPlugin,
+        interactionPlugin,
+    ],
+    timeZone: 'UTC',
+    initialView: 'dayGridMonth',
+    editable: true,
+    selectable: true,
+    weekends: true,
+    datesSet: function (dateInfo) {
+        const numberOfDayToAdd = 10;
+        const nextDay = new Date(dateInfo.start.getTime());
+        nextDay.setDate(dateInfo.start.getDate() + numberOfDayToAdd);
+        state.presentMonthSmall = nextDay;
     },
 });
 
@@ -238,12 +279,43 @@ const state = reactive({
     isOpenPopupCreate: false,
     is_event: false,
     itemEvent: {},
-    presentMonth: "March 2023",
+    presentMonth: '',
+    presentMonthSmall: '',
+    keyCalendar: 1,
 });
 
+/**
+ * format month header title
+ * @author: Vi
+ */
+const renderTitle = (presentDate) => {
+    if (presentDate) {
+        const monthNames = [
+            'Tháng 1, ',
+            'Tháng 2, ',
+            'Tháng 3, ',
+            'Tháng 4, ',
+            'Tháng 5, ',
+            'Tháng 6, ',
+            'Tháng 7, ',
+            'Tháng 8, ',
+            'Tháng 9, ',
+            'Tháng 10, ',
+            'Tháng 11, ',
+            'Tháng 12, ',
+        ];
+        const d = new Date(presentDate);
+        return monthNames[d.getMonth()] + ' ' + d.getFullYear();
+    }
+    return '';
+};
+/**
+ * select event
+ * @author Vii
+ */
 const selectEvent = () => {
     axios
-        .get(import.meta.env.VITE_API_PUBLIC_KEY + "api/select-event", {})
+        .get(import.meta.env.VITE_API_PUBLIC_KEY + 'api/select-event')
         .then((response) => {
             const events = [];
             const eventDatas = response.data.data;
@@ -252,35 +324,44 @@ const selectEvent = () => {
                     ...item, //copy item
                     start: item.start_date,
                     end: item.end_date ? item.end_date : item.start_date,
-                    color: item.is_event ? item.color : "#3F51B5",
+                    color: item.is_event ? item.color : '#3F51B5',
                     event_id: item.id,
                 });
             });
             console.log(events);
             options.events = events;
+            state.keyCalendar += 1;
         });
 };
 
 const goToDay = () => {
     calendar.value.getApi().today();
-};
-const preMonth = () => {
-    calendar.value.getApi().prev();
+    calendarSmall.value.getApi().today();
 };
 const nextMonth = () => {
     calendar.value.getApi().next();
 };
+const preMonth = () => {
+    calendar.value.getApi().prev();
+};
+const nextMonthSmall = () => {
+    calendarSmall.value.getApi().next();
+};
+const preMonthSmall = () => {
+    calendarSmall.value.getApi().prev();
+};
+
 const choseday = () => {
-    calendar.value.getApi().changeView("timeGridDay");
+    calendar.value.getApi().changeView('timeGridDay');
 };
 const chosewwek = () => {
-    calendar.value.getApi().changeView("timeGridWeek");
+    calendar.value.getApi().changeView('timeGridWeek');
 };
 const chosemonth = () => {
-    calendar.value.getApi().changeView("dayGridMonth");
+    calendar.value.getApi().changeView('dayGridMonth');
 };
 const choseyear = () => {
-    calendar.value.getApi().changeView("multiMonthYear");
+    calendar.value.getApi().changeView('multiMonthYear');
 };
 
 onMounted(() => {
