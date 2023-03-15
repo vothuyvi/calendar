@@ -48,6 +48,7 @@
 import { reactive, toRefs } from "vue";
 import axios from "axios";
 import { useRouter } from "vue-router";
+import {TOKEN_LOGIN} from '@/const';
 export default {
     setup() {
         const router = useRouter();
@@ -74,7 +75,7 @@ export default {
                     } = response;
                     console.log(user.token.accessToken); //lay token ra
                     // luu token vao localstorage
-                    localStorage.setItem("tokenlogin", user.token.accessToken);
+                    localStorage.setItem(TOKEN_LOGIN, user.token.accessToken);
                     state.error = null; //loi = null-> login thanh cong
                     //chuyen den giao dien calender
                     router.push({

@@ -76,18 +76,25 @@
             <hr />
         </div>
         <div class="create-event__bot">
+            <button
+                v-if="state.form.id"
+                @click="deleteEvent(state.form.id)"
+                class="create-event__bot--btnDelete"
+            >
+                Xóa
+            </button>
             <button @click="addEvent()">Lưu</button>
         </div>
     </div>
 </template>
 
 <script setup>
-import axios from "axios";
-import { reactive, onMounted } from "vue";
-
-const emit = defineEmits(["closePopup", "getAllEvent"]); //con truyền qua cha dùng emit
+import axios from 'axios';
+import { reactive, onMounted } from 'vue';
+import Api from '@/utils/api';
+const emit = defineEmits(['closePopup', 'getAllEvent']); //con truyền qua cha dùng emit
 const hiheModel = () => {
-    emit("closePopup");
+    emit('closePopup');
 };
 
 const props = defineProps({
@@ -99,7 +106,7 @@ const props = defineProps({
     eventget: {
         type: Object,
         required: true,
-        default: "",
+        default: '',
     },
 });
 onMounted(() => {
@@ -108,32 +115,31 @@ onMounted(() => {
 });
 const state = reactive({
     form: {
-        id: null,
-        title: "",
+        id: '',
+        title: '',
         is_event: 1,
-        datetime_start: "",
-        datetime_end: "",
-        description: "",
-        color: "",
+        datetime_start: '',
+        datetime_end: '',
+        description: '',
+        color: '',
     },
-    error: "",
-    success: "",
+    error: '',
+    success: '',
 });
 /**
  * add event
  * @author Vi
  */
 const addEvent = () => {
-    axios
-        .post(import.meta.env.VITE_API_PUBLIC_KEY + "api/add-event", state.form)
+    Api.post('api/add-event', state.form)
         .then((response) => {
             const {
                 data: { events },
             } = response;
             console.log(events);
             state.error = null;
-            emit("getAllEvent");
-            emit("closePopup");
+            emit('getAllEvent');
+            emit('closePopup');
         })
         .catch((error) => {
             console.log(error);
@@ -141,8 +147,21 @@ const addEvent = () => {
             state.error = error.response.data.errors;
         });
 };
+
+/**
+ * delete Event
+ * @author Vi
+ */
+const deleteEvent = (id) => {
+    Api.post('api/delete-event', {
+        id: id,
+    }).then(() => {
+        emit('getAllEvent');
+        emit('closePopup');
+    });
+};
 </script>
 
 <style lang="scss" scoped>
-@import "@/style/event.scss";
+@import '@/style/event.scss';
 </style>

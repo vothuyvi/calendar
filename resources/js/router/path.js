@@ -1,34 +1,39 @@
-import Layout from "@/layouts/index.vue";
-import login from "@/pages/Login.vue";
-import Calender from "@/pages/Calendar.vue";
-import Register from "@/pages/Register.vue";
-import EventModel from "@/components/eventModel.vue";
+import Layout from '@/layouts/index.vue';
+import login from '@/pages/Login.vue';
+import Calender from '@/pages/Calendar.vue';
+import Register from '@/pages/Register.vue';
+import EventModel from '@/components/eventModel.vue';
+import Error404 from '@/pages/Error404.vue';
 const path = [
     {
-        path: "/",
+        path: '/',
         component: Layout,
         children: [
             {
-                path: "",
-                name: "LoginView",
+                path: '',
+                name: 'LoginView',
                 component: login,
-                
             },
             {
-                path: "calendar",
-                name: "CalendarView",
+                path: 'calendar',
+                name: 'CalendarView',
                 component: Calender,
             },
             {
-                path: "register",
-                name: "ResisgerView",
+                path: 'register',
+                name: 'ResisgerView',
                 component: Register,
             },
             {
-                path: "event-model",
-                name: "EventModelView",
+                path: 'event-model',
+                name: 'EventModelView',
                 component: EventModel,
-            }
+            },
+            {
+                path: '404',
+                name: '404',
+                component: Error404,
+            },
         ],
     },
 ];

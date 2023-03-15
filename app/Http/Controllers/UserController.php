@@ -64,4 +64,16 @@ class UserController extends Controller {
     }
 
   }
+  public function logout () 
+  {
+
+    if (Auth()->check()) {
+       \request()->user()->token()->revoke();
+        $messge="success";
+       return ResponseApi::notifis($messge);
+      
+    }
+ 
+   
+  }
 }

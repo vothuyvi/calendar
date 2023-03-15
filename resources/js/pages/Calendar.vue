@@ -57,7 +57,7 @@
                     <div class="container-header-right__logout">
                         <div class="container-header-right__triangle"></div>
                         <i class="fa-solid fa-right-from-bracket"></i>
-                        <span>Đăng xuất</span>
+                        <span @click="logout()">Đăng xuất</span>
                     </div>
                 </div>
             </div>
@@ -86,7 +86,6 @@
                     >
                         <span>Sự kiện</span>
                     </div>
-
                     <div
                         class="container-body-left_drop-insert--item"
                         @click="state.isOpenPopupCreate = true"
@@ -98,8 +97,8 @@
                 <div class="container-body-left__canlendar">
                     <div class="container-body-left__canlendar--title">
                         <span class="container-header-left__today">
-                            {{ renderTitle(state.presentMonthSmall) }}</span
-                        >
+                            {{ renderTitle(state.presentMonthSmall) }}
+                        </span>
                         <div>
                             <i
                                 class="fa-solid fa-angle-left"
@@ -122,17 +121,24 @@
                         <span> Lịch của tôi</span>
                         <i class="fa-solid fa-chevron-up"></i>
                     </div>
+
                     <div class="list-event__input">
-                        <input type="checkbox" name="" id="" />
-                        <span> Võ Thúy Vi </span>
+                        <input
+                            type="checkbox"
+                            name=""
+                            id=""
+                            v-model="state.filter.event"
+                        />
+                        <span>Sự kiện</span>
                     </div>
                     <div class="list-event__input check_reminder">
-                        <input type="checkbox" name="" id="" />
+                        <input
+                            type="checkbox"
+                            name=""
+                            id=""
+                            v-model="state.filter.reminder"
+                        />
                         <span>Lời nhắc</span>
-                    </div>
-                    <div class="list-event__input">
-                        <input type="checkbox" name="" id="" />
-                        <span>Sự kiện</span>
                     </div>
                 </div>
             </div>
@@ -160,7 +166,7 @@
 </style>
 
 <script setup>
-import { ref, reactive, onMounted } from 'vue';
+import { ref, reactive, onMounted, watch } from 'vue';
 import axios from 'axios';
 import '@fullcalendar/core';
 import FullCalender from '@fullcalendar/vue3';
@@ -170,6 +176,9 @@ import listGridPlugin from '@fullcalendar/list';
 import multiMonthPlugin from '@fullcalendar/multimonth';
 import interactionPlugin from '@fullcalendar/interaction';
 import EventModel from '@/components/EventModel.vue';
+import { useRouter } from 'vue-router';
+import Api from '@/utils/api';
+import { TOKEN_LOGIN } from '@/const/index.js';
 
 const id = ref(10);
 const calendar = ref(null);
@@ -273,7 +282,12 @@ const optionCalanderSmall = reactive({
         nextDay.setDate(dateInfo.start.getDate() + numberOfDayToAdd);
         state.presentMonthSmall = nextDay;
     },
+    dateClick: function (info) {
+        console.log(info);
+        calendar.value.getApi().gotoDate(info.dateStr);
+    },
 });
+const router = useRouter();
 
 const state = reactive({
     isOpenPopupCreate: false,
@@ -281,7 +295,10 @@ const state = reactive({
     itemEvent: {},
     presentMonth: '',
     presentMonthSmall: '',
-    keyCalendar: 1,
+    filter: {
+        event: true,
+        reminder: true,
+    },
 });
 
 /**
@@ -291,21 +308,21 @@ const state = reactive({
 const renderTitle = (presentDate) => {
     if (presentDate) {
         const monthNames = [
-            'Tháng 1, ',
-            'Tháng 2, ',
-            'Tháng 3, ',
-            'Tháng 4, ',
-            'Tháng 5, ',
-            'Tháng 6, ',
-            'Tháng 7, ',
-            'Tháng 8, ',
-            'Tháng 9, ',
-            'Tháng 10, ',
-            'Tháng 11, ',
-            'Tháng 12, ',
+            'Tháng 1',
+            'Tháng 2',
+            'Tháng 3',
+            'Tháng 4',
+            'Tháng 5',
+            'Tháng 6',
+            'Tháng 7',
+            'Tháng 8',
+            'Tháng 9',
+            'Tháng 10',
+            'Tháng 11',
+            'Tháng 12',
         ];
         const d = new Date(presentDate);
-        return monthNames[d.getMonth()] + ' ' + d.getFullYear();
+        return monthNames[d.getMonth()] + ', ' + d.getFullYear();
     }
     return '';
 };
@@ -314,24 +331,54 @@ const renderTitle = (presentDate) => {
  * @author Vii
  */
 const selectEvent = () => {
-    axios
-        .get(import.meta.env.VITE_API_PUBLIC_KEY + 'api/select-event')
-        .then((response) => {
-            const events = [];
-            const eventDatas = response.data.data;
-            eventDatas.forEach((item) => {
-                events.push({
-                    ...item, //copy item
-                    start: item.start_date,
-                    end: item.end_date ? item.end_date : item.start_date,
-                    color: item.is_event ? item.color : '#3F51B5',
-                    event_id: item.id,
-                });
+    Api.get('api/select-event?type=' + getTypeFilter()).then((response) => {
+        const events = [];
+        const eventDatas = response.data.data;
+        eventDatas.forEach((item) => {
+            events.push({
+                ...item, //copy item
+                start: item.start_date,
+                end: item.end_date ? item.end_date : item.start_date,
+                color: item.is_event ? item.color : '#3F51B5',
+                event_id: item.id,
             });
-            console.log(events);
-            options.events = events;
-            state.keyCalendar += 1;
         });
+        console.log(events);
+        options.events = events;
+    });
+};
+
+watch(() => state.filter.event, selectEvent);
+watch(() => state.filter.reminder, selectEvent);
+
+/**
+ * get type check event & check reminder
+ * @author Vi
+ */
+const getTypeFilter = () => {
+    if (state.filter.event && state.filter.reminder) {
+        return 2;
+    }
+    if (state.filter.event) {
+        return 1;
+    }
+    if (state.filter.reminder) {
+        return 0;
+    }
+    return 3;
+};
+/**
+ * logout
+ * @author Vi
+ */
+const logout = () => {
+    Api.post('api/logout').then(() => {
+        localStorage.removeItem(TOKEN_LOGIN);
+        state.error = null;
+        router.push({
+            name: 'LoginView',
+        });
+    });
 };
 
 const goToDay = () => {

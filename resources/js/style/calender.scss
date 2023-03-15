@@ -312,6 +312,13 @@
                 &:deep(.fc-scroller-liquid-absolute) {
                     position: unset !important;
                 }
+                &:deep(.fc-daygrid-day-top) {
+                    justify-content: center;
+                    font-size: 1.1rem;
+                }
+                &:deep(.fc-day) {
+                    border: unset !important;
+                }
 
                 .container-body-left__canlendar--title {
                     margin-bottom: 1rem;

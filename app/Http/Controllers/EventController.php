@@ -58,12 +58,23 @@ class EventController extends Controller
         
     }
     public function selectEvent(Request $request)
-    {
-            $events = Event::all();
-            $messge="yes";
-            return ResponseApi::success($events, $messge);
+    {   
+        $events = Event::all();
+        if($request->type != '2') 
+        {
+            $events = Event::where('is_event', $request->type)->get();
+        } 
+        $messge="yes";
+        return ResponseApi::success($events, $messge);
+
         
     }
-
+    public function deleteEvent(Request $request) {
     
+            $id = $request->id;
+            Event::where('id', $id)->delete();
+            $msg="xoa thanh cong";
+            return json_encode($msg);      
+    }
+
 }
