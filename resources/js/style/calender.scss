@@ -97,8 +97,6 @@
                     background-color: white;
                     font-weight: bold;
                     border-radius: 0.5rem;
-                    margin-right: 4rem;
-                    margin-left: 3.7rem;
                     cursor: pointer;
                     &:hover {
                         background-color: rgb(241, 244, 249);
@@ -124,7 +122,7 @@
                     border-radius: 0.5rem;
                     background-color: #fff;
                     margin-top: 1rem;
-                    right: 4.2rem;
+                    right: 0.2rem;
                     filter: drop-shadow(0px 2px 3px #bbb);
 
                     .header-right-list__triangle {
@@ -144,6 +142,7 @@
                             border: 0;
                             justify-content: space-between;
                             &:hover {
+                                cursor: pointer;
                                 background-color: #f3f6fa;
                             }
                         }
@@ -155,9 +154,15 @@
                     }
                 }
             }
+            .container-header-right__name-user {
+                font-size: 1.3rem;
+                font-weight: bold;
+                padding-right: 1rem;
+                padding-left: 1.2rem;
+            }
             .container-header-right__group-user {
                 position: relative;
-                .container-header-right__user {
+                .container-header-right__icon-user {
                     width: 3.2rem;
                     height: 3.2rem;
                     background-color: rgb(51, 144, 215);
@@ -183,7 +188,7 @@
                 }
                 .container-header-right__logout {
                     display: none;
-                    width: 15rem;
+                    width: 12rem;
                     height: fit-content;
                     position: absolute;
                     z-index: 2;
@@ -290,7 +295,9 @@
                 }
                 &:deep(.fc-col-header) {
                     width: 100% !important;
+                    margin-bottom: 1rem !important;
                 }
+
                 &:deep(.fc-daygrid-body-unbalanced) {
                     width: -webkit-fill-available !important;
                 }
@@ -318,6 +325,32 @@
                 }
                 &:deep(.fc-day) {
                     border: unset !important;
+                    cursor: pointer;
+                    border-radius: 50%;
+                }
+
+                &:deep(.fc .fc-daygrid-day-frame) {
+                    height: 3rem !important;
+                }
+                &:deep(.fc-scrollgrid-section) {
+                    font-size: 1rem;
+                }
+                &:deep(.fc-scrollgrid-liquid) {
+                    border: unset !important;
+                }
+                &:deep(.fc-theme-standard td) {
+                    border: unset !important;
+                }
+                &:deep(.fc-theme-standard th) {
+                    border: unset !important;
+                }
+                &:deep(.fc-day-today) {
+                    background-color: rgb(26, 115, 232);
+                    color: white;
+                    font-weight: bold;
+                }
+                &:deep(.fc-daygrid-day-number) {
+                    margin-top: 0.5rem;
                 }
 
                 .container-body-left__canlendar--title {
@@ -397,7 +430,9 @@
             &:deep(.fc-daygrid-event-dot) {
                 display: none;
             }
-
+            &:deep(.fc-scrollgrid-section) {
+                font-size: 1.3rem !important;
+            }
             &:deep(.fc-daygrid-day-top) {
                 justify-content: center;
                 font-size: 1.3rem;
@@ -410,6 +445,16 @@
                 font-size: 1.3rem;
                 font-weight: bold;
                 padding: 0.1rem;
+            }
+            &:deep(.fc-day-today) {
+                background-color: white;
+            }
+            &:deep(#fc-dom-125) {
+                background-color: rgb(26, 115, 232);
+                color: white;
+                font-weight: bold;
+                border-radius: 50%;
+                padding: 0.8rem 0.9rem;
             }
 
             &:deep(.fc-event) {

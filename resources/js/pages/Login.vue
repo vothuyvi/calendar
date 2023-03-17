@@ -1,4 +1,4 @@
-<template>
+ <template>
     <div class="container__login">
         <div class="container__login-body">
             <div class="login-body__header">
@@ -45,18 +45,18 @@
     </div>
 </template>
 <script>
-import { reactive, toRefs } from "vue";
-import axios from "axios";
-import { useRouter } from "vue-router";
-import {TOKEN_LOGIN} from '@/const';
+import { reactive, toRefs } from 'vue';
+import axios from 'axios';
+import { useRouter } from 'vue-router';
+import { TOKEN_LOGIN } from '@/const';
 export default {
     setup() {
         const router = useRouter();
         const state = reactive({
-            email: "",
-            password: "",
+            email: '',
+            password: '',
             show: false,
-            error: "",
+            error: '',
         });
 
         const Login = () => {
@@ -64,8 +64,7 @@ export default {
             // goi axios gui data len api login
             // lay du lieu tra ve tu axios
             axios
-                //http://127.0.0.1:8000/api/login
-                .post(import.meta.env.VITE_API_PUBLIC_KEY + "api/login", {
+                .post(import.meta.env.VITE_API_PUBLIC_KEY + 'api/login', {
                     email: state.email,
                     password: state.password,
                 })
@@ -79,7 +78,7 @@ export default {
                     state.error = null; //loi = null-> login thanh cong
                     //chuyen den giao dien calender
                     router.push({
-                        name: "CalendarView",
+                        name: 'CalendarView',
                     });
                 })
                 .catch((error) => {
@@ -94,5 +93,5 @@ export default {
 };
 </script>
 <style lang="scss" scoped>
-@import "@/style/login.scss";
+@import '@/style/login.scss';
 </style>

@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 use App\Models\Event;
+use App\Models\User;
 use App\Services\ResponseApi;
 use Illuminate\Http\Request;
 use Carbon\Carbon;
@@ -9,6 +10,10 @@ use Illuminate\Support\Facades\Auth;
 use Redirect,Response;
 class EventController extends Controller
 {
+    /**
+     * function Add event api
+     * @author Vii
+     */
     public function addEvent (Request $request) {
          try {
             $validator =\Validator::make($request->all(),[
@@ -35,12 +40,13 @@ class EventController extends Controller
                 return ResponseApi::errors($validator->errors());
             }
             else {
+                // dd(Auth()->User()->id);
                 $event = new Event();
-                
                 if ($request->id) {
                     $event = Event::where('id', $request->id)->first();
                 }
-                
+                $user = Auth()->User()->id;
+                $event->user_id = $user;
                 $event->title = $request->title;
                 $event->is_event = $request->is_event;
                 $event->start_date = $request->datetime_start;
@@ -57,18 +63,29 @@ class EventController extends Controller
         }
         
     }
+    /**
+     * function select event api
+     * @author Vii
+     */
     public function selectEvent(Request $request)
     {   
-        $events = Event::all();
-        if($request->type != '2') 
+        $userId = Auth()->User()->id;
+        $events = Event::where('user_id', $userId)->get();
+
+        // check filter event or reminder
+        if ($request->type != '2') 
         {
-            $events = Event::where('is_event', $request->type)->get();
+            $events = Event::where('is_event', $request->type)->where('user_id', $userId)->get();
         } 
         $messge="yes";
         return ResponseApi::success($events, $messge);
 
         
     }
+    /**
+     * function delete event api
+     * @author Vii
+     */
     public function deleteEvent(Request $request) {
     
             $id = $request->id;

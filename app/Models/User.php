@@ -7,7 +7,7 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 // use Laravel\Sanctum\HasApiTokens;
 use Laravel\Passport\HasApiTokens;
-use App\Http\Controllers\UserController;
+
 
 class User extends Authenticatable
 {
@@ -33,5 +33,11 @@ class User extends Authenticatable
     {
         return $this->hasMany(OauthAccessToken::class);
     }
+    public function event(): \Illuminate\Database\Eloquent\Relations\belongsTo
+    {
+        return $this->belongsTo(Event::class, 'user_id','id');
+    }
+
+   
 
 }

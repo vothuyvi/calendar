@@ -92,6 +92,7 @@
 import axios from 'axios';
 import { reactive, onMounted } from 'vue';
 import Api from '@/utils/api';
+
 const emit = defineEmits(['closePopup', 'getAllEvent']); //con truyền qua cha dùng emit
 const hiheModel = () => {
     emit('closePopup');

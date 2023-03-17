@@ -45,19 +45,24 @@
                         </div>
                     </div>
                 </div>
-
+                <div class="container-header-right__name-user">
+                    <span>{{ state.user.email }}</span>
+                </div>
                 <div class="container-header-right__group-user">
                     <label for="logout">
-                        <div class="container-header-right__user">
-                            <span>Vi</span>
+                        <div class="container-header-right__icon-user">
+                            <span><i class="fa-solid fa-user"></i></span>
                         </div>
                     </label>
 
                     <input type="checkbox" id="logout" />
-                    <div class="container-header-right__logout">
+                    <div
+                        @click="logout()"
+                        class="container-header-right__logout"
+                    >
                         <div class="container-header-right__triangle"></div>
                         <i class="fa-solid fa-right-from-bracket"></i>
-                        <span @click="logout()">Đăng xuất</span>
+                        <span>Đăng xuất</span>
                     </div>
                 </div>
             </div>
@@ -82,13 +87,13 @@
                 <div class="container-body-left__drop-insert">
                     <div
                         class="container-body-left_drop-insert--item"
-                        @click="state.isOpenPopupCreate = true"
+                        @click="createNew(true)"
                     >
                         <span>Sự kiện</span>
                     </div>
                     <div
                         class="container-body-left_drop-insert--item"
-                        @click="state.isOpenPopupCreate = true"
+                        @click="createNew(false)"
                     >
                         <span>Lời nhắc</span>
                     </div>
@@ -158,6 +163,7 @@
             @close-popup="state.isOpenPopupCreate = false"
             @get-all-event="selectEvent()"
         />
+        <loading v-if="state.loading" />
     </div>
 </template>
 
@@ -167,7 +173,6 @@
 
 <script setup>
 import { ref, reactive, onMounted, watch } from 'vue';
-import axios from 'axios';
 import '@fullcalendar/core';
 import FullCalender from '@fullcalendar/vue3';
 import dayGridPlugin from '@fullcalendar/daygrid';
@@ -176,9 +181,11 @@ import listGridPlugin from '@fullcalendar/list';
 import multiMonthPlugin from '@fullcalendar/multimonth';
 import interactionPlugin from '@fullcalendar/interaction';
 import EventModel from '@/components/EventModel.vue';
+import Loading from '@/components/Loading.vue';
 import { useRouter } from 'vue-router';
 import Api from '@/utils/api';
 import { TOKEN_LOGIN } from '@/const/index.js';
+import axios from 'axios';
 
 const id = ref(10);
 const calendar = ref(null);
@@ -287,10 +294,11 @@ const optionCalanderSmall = reactive({
         calendar.value.getApi().gotoDate(info.dateStr);
     },
 });
-const router = useRouter();
 
+const router = useRouter();
 const state = reactive({
     isOpenPopupCreate: false,
+    isCloseCropCreate: true,
     is_event: false,
     itemEvent: {},
     presentMonth: '',
@@ -299,6 +307,8 @@ const state = reactive({
         event: true,
         reminder: true,
     },
+    loading: false,
+    user: [],
 });
 
 /**
@@ -327,25 +337,54 @@ const renderTitle = (presentDate) => {
     return '';
 };
 /**
+ * create new
+ * @author Vi :3
+ */
+const createNew = (isEvent) => {
+    state.isOpenPopupCreate = true;
+    state.itemEvent = {
+        id: null,
+        title: '',
+        is_event: isEvent,
+        description: '',
+        datetime_start: '',
+        datetime_end: '',
+        color: '',
+    };
+};
+/**
+ * close drop dow
+ * @author Vi :3
+ */
+const isCloseCropCreate = () => {
+    if ((state.isOpenPopupCreate = true)) {
+        state.isCloseCropCreate = false;
+    }
+};
+/**
  * select event
  * @author Vii
  */
-const selectEvent = () => {
-    Api.get('api/select-event?type=' + getTypeFilter()).then((response) => {
-        const events = [];
-        const eventDatas = response.data.data;
-        eventDatas.forEach((item) => {
-            events.push({
-                ...item, //copy item
-                start: item.start_date,
-                end: item.end_date ? item.end_date : item.start_date,
-                color: item.is_event ? item.color : '#3F51B5',
-                event_id: item.id,
+const selectEvent = async () => {
+    state.loading = true;
+    await Api.get('api/select-event?type=' + getTypeFilter()).then(
+        (response) => {
+            const events = [];
+            const eventDatas = response.data.data;
+            eventDatas.forEach((item) => {
+                events.push({
+                    ...item, //copy item
+                    start: item.start_date,
+                    end: item.end_date ? item.end_date : item.start_date,
+                    color: item.is_event ? item.color : '#3F51B5',
+                    event_id: item.id,
+                });
             });
-        });
-        console.log(events);
-        options.events = events;
-    });
+            state.loading = false;
+            console.log(events);
+            options.events = events;
+        }
+    );
 };
 
 watch(() => state.filter.event, selectEvent);
@@ -381,6 +420,17 @@ const logout = () => {
     });
 };
 
+/**
+ * get info user
+ * @author Vii :3
+ */
+const getInfo = async () => {
+    await Api.get('api/get-info').then((response) => {
+        const userData = response.data.data;
+        state.user = userData;
+    });
+};
+
 const goToDay = () => {
     calendar.value.getApi().today();
     calendarSmall.value.getApi().today();
@@ -411,7 +461,8 @@ const choseyear = () => {
     calendar.value.getApi().changeView('multiMonthYear');
 };
 
-onMounted(() => {
-    selectEvent();
+onMounted(async () => {
+    await getInfo();
+    await selectEvent();
 });
 </script>

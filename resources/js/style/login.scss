@@ -62,7 +62,7 @@ input::-ms-clear {
             }
 
             .fontAwesome {
-                font-family: Helvetica, "FontAwesome", sans-serif;
+                font-family: Helvetica, 'FontAwesome', sans-serif;
             }
         }
         .login-body__bot {
@@ -85,9 +85,12 @@ input::-ms-clear {
             .login-body-bot__signup {
                 text-align: center;
                 margin-bottom: 2rem;
+
                 a {
                     text-decoration: none;
-                    
+                    color: #448aff;
+                    font-size: 1.4rem;
+                    font-weight: bold;
                 }
             }
         }

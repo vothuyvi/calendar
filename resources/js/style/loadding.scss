@@ -1,0 +1,18 @@
+.wrap-loader {
+    background-color: rgba(0, 0, 0, 0.5);
+    position: fixed;
+    left: 0;
+    right: 0;
+    top: 0;
+    bottom: 0;
+    z-index: 100;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    .loader {
+        img {
+            width: 3.5rem;
+            height: 3.5rem;
+        }
+    }
+}
