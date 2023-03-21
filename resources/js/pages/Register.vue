@@ -38,29 +38,35 @@
                 <div class="login-body-bot__signup"></div>
             </div>
         </div>
+        <loading v-if="loading" />
     </div>
 </template>
 <script>
-import { reactive, toRefs } from "vue";
-import axios from "axios";
-import { useRouter } from "vue-router";
+import { reactive, toRefs } from 'vue';
+import Api from '@/utils/api';
+import { useRouter } from 'vue-router';
+import Loading from '@/components/Loading.vue';
 
 export default {
+    components: {
+        Loading,
+    },
     setup() {
         const router = useRouter();
         const state = reactive({
-            email: "",
-            password: "",
-            passwordconfirmation: "",
-            error: "",
+            email: '',
+            password: '',
+            passwordconfirmation: '',
+            error: '',
+            loading: false,
         });
         const Register = () => {
-            axios
-                .post(import.meta.env.VITE_API_PUBLIC_KEY + "api/register", {
-                    email: state.email,
-                    password: state.password,
-                    passwordconfirmation: state.passwordconfirmation,
-                })
+            state.loading = true;
+            Api.post('api/register', {
+                email: state.email,
+                password: state.password,
+                passwordconfirmation: state.passwordconfirmation,
+            })
                 .then((response) => {
                     const {
                         data: { data: user },
@@ -68,13 +74,15 @@ export default {
                     console.log(user);
                     state.error = null;
                     router.push({
-                        name: "LoginView",
+                        name: 'LoginView',
                     });
+                    state.loading = false;
                 })
                 .catch((error) => {
                     console.log(error);
                     console.log(error.response.data);
                     state.error = error.response.data.errors;
+                    state.loading = false;
                 });
         };
         return { ...toRefs(state), Register };
@@ -82,5 +90,5 @@ export default {
 };
 </script>
 <style lang="scss" scoped>
-@import "@/style/login.scss";
+@import '@/style/login.scss';
 </style>

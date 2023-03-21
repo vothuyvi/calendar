@@ -1,4 +1,4 @@
- <template>
+<template>
     <div class="container__login">
         <div class="container__login-body">
             <div class="login-body__header">
@@ -37,19 +37,24 @@
                 <button @click="Login()">Sign In</button>
                 <div class="login-body-bot__signup">
                     <router-link :to="{ name: 'ResisgerView' }"
-                        ><span>Create your account?</span></router-link
-                    >
+                        ><span>Create your account?</span>
+                    </router-link>
                 </div>
             </div>
+            <loading v-if="loading" />
         </div>
     </div>
 </template>
 <script>
 import { reactive, toRefs } from 'vue';
-import axios from 'axios';
 import { useRouter } from 'vue-router';
 import { TOKEN_LOGIN } from '@/const';
+import Api from '@/utils/api';
+import Loading from '@/components/Loading.vue';
 export default {
+    components: {
+        Loading,
+    },
     setup() {
         const router = useRouter();
         const state = reactive({
@@ -57,17 +62,17 @@ export default {
             password: '',
             show: false,
             error: '',
+            loading: false,
         });
-
         const Login = () => {
             //  lay data tu 2 input email va pass
             // goi axios gui data len api login
             // lay du lieu tra ve tu axios
-            axios
-                .post(import.meta.env.VITE_API_PUBLIC_KEY + 'api/login', {
-                    email: state.email,
-                    password: state.password,
-                })
+            state.loading = true;
+            Api.post(import.meta.env.VITE_API_PUBLIC_KEY + 'api/login', {
+                email: state.email,
+                password: state.password,
+            })
                 .then((response) => {
                     const {
                         data: { data: user }, //detrutorstring
@@ -80,14 +85,15 @@ export default {
                     router.push({
                         name: 'CalendarView',
                     });
+                    state.loading = false;
                 })
                 .catch((error) => {
                     console.log(error);
                     console.log(error.response.data);
                     state.error = error.response.data.message;
+                    state.loading = false;
                 });
         };
-
         return { ...toRefs(state), Login };
     },
 };

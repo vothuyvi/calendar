@@ -27,12 +27,14 @@
             </div>
             <div class="create-event__center--btn">
                 <button
+                    v-if="state.form.is_event || !state.form.id"
                     :class="`${state.form.is_event ? 'btn_event' : ''}`"
                     @click="state.form.is_event = 1"
                 >
                     Sự kiện
                 </button>
                 <button
+                    v-if="!state.form.is_event || !state.form.id"
                     :class="`${!state.form.is_event ? 'btn_event' : ''}`"
                     @click="state.form.is_event = 0"
                 >
@@ -61,7 +63,7 @@
                     cols="30"
                 ></textarea>
             </div>
-            <hr />
+            <hr v-if="state.form.is_event" />
             <div class="create-event__center--color" v-if="state.form.is_event">
                 <i class="fa-regular fa-calendar"></i>
                 <div class="create-event-center-color__chose">
@@ -73,7 +75,7 @@
                     <i class="fa-solid fa-caret-down"></i>
                 </div>
             </div>
-            <hr />
+            <hr v-if="state.form.is_event" />
         </div>
         <div class="create-event__bot">
             <button
@@ -89,7 +91,6 @@
 </template>
 
 <script setup>
-import axios from 'axios';
 import { reactive, onMounted } from 'vue';
 import Api from '@/utils/api';
 
@@ -126,6 +127,7 @@ const state = reactive({
     },
     error: '',
     success: '',
+    isHideButton: true,
 });
 /**
  * add event

@@ -2,7 +2,7 @@
     <div class="container">
         <div class="container__header">
             <div class="container__header--left">
-                <label for="menu">
+                <label for="menu" @click="render()">
                     <i class="fa-solid fa-bars"></i>
                 </label>
                 <label for="menu">
@@ -12,9 +12,9 @@
                 <button @click="goToDay()">Hôm nay</button>
                 <i class="fa-solid fa-angle-left" @click="preMonth()"></i>
                 <i class="fa-solid fa-angle-right" @click="nextMonth()"></i>
-                <span class="container-header-left__today">{{
-                    renderTitle(state.presentMonth)
-                }}</span>
+                <span class="container-header-left__today">
+                    {{ renderTitle(state.presentMonth) }}
+                </span>
             </div>
             <div class="container__header--right">
                 <div class="container-header-right__icon">
@@ -35,7 +35,7 @@
                             <button @click="choseday()">Ngày</button>
                         </div>
                         <div class="container-header-right-list__item">
-                            <button @click="chosewwek()">Tuần</button>
+                            <button @click="chosewek()">Tuần</button>
                         </div>
                         <div class="container-header-right-list__item">
                             <button @click="chosemonth()">Tháng</button>
@@ -115,9 +115,21 @@
                             ></i>
                         </div>
                     </div>
-
+                    <div class="container-body-right__header">
+                        <table>
+                            <tr>
+                                <th>CN</th>
+                                <th>T2</th>
+                                <th>T3</th>
+                                <th>T4</th>
+                                <th>T5</th>
+                                <th>T6</th>
+                                <th>T7</th>
+                            </tr>
+                        </table>
+                    </div>
                     <FullCalender
-                        v-bind:options="optionCalanderSmall"
+                        v-bind:options="optionCalendarSmall"
                         ref="calendarSmall"
                     />
                 </div>
@@ -148,6 +160,20 @@
                 </div>
             </div>
             <div class="container-body__right">
+                <div class="container-body-right__header">
+                    <table>
+                        <tr>
+                            <th>CN</th>
+                            <th>TH 2</th>
+                            <th>TH 3</th>
+                            <th>TH 4</th>
+                            <th>TH 5</th>
+                            <th>TH 6</th>
+                            <th>TH 7</th>
+                        </tr>
+                    </table>
+                </div>
+
                 <FullCalender
                     ref="calendar"
                     v-bind:options="options"
@@ -184,13 +210,11 @@ import EventModel from '@/components/EventModel.vue';
 import Loading from '@/components/Loading.vue';
 import { useRouter } from 'vue-router';
 import Api from '@/utils/api';
-import { TOKEN_LOGIN } from '@/const/index.js';
-import axios from 'axios';
+import { TOKEN_LOGIN, COLOR } from '@/const/index.js';
 
 const id = ref(10);
 const calendar = ref(null);
 const calendarSmall = ref(null);
-
 const options = reactive({
     events: [],
     title: '',
@@ -211,6 +235,7 @@ const options = reactive({
     editable: true,
     selectable: true,
     weekends: true,
+
     select: (arg) => {
         id.value = id.value + 1;
 
@@ -224,6 +249,7 @@ const options = reactive({
             allDay: false,
         });
     },
+
     eventClick: function (info) {
         state.itemEvent = {
             id: info.event.extendedProps.event_id,
@@ -236,6 +262,7 @@ const options = reactive({
         };
         state.isOpenPopupCreate = true;
     },
+
     dateClick: function (info) {
         state.itemEvent = {
             id: null,
@@ -248,6 +275,7 @@ const options = reactive({
         };
         state.isOpenPopupCreate = true;
     },
+
     eventDidMount: function (info) {
         if (!info.event.extendedProps.is_event) {
             info.el.classList.add('reminder');
@@ -258,8 +286,19 @@ const options = reactive({
             const title = info.el.querySelector('.fc-event-title');
             title.innerHTML = `<i class="fa-regular fa-calendar"></i></i></i><span class="name_remider">${info.event.title}</span>`;
         }
+        //fix bug create
+        let events = document.querySelectorAll('.fc-event-title');
+        //duyet qua event, kiem tra lenght = 3 moi xu ly
+        events.forEach((item) => {
+            if (item.childNodes.length == 3) {
+                item.childNodes[2].textContent = '';
+            }
+        });
+        // console.log(events[0].childNodes);
     },
+
     datesSet: function (dateInfo) {
+        console.log(dateInfo);
         const numberOfDayToAdd = 10;
         const nextDay = new Date(dateInfo.start.getTime());
         nextDay.setDate(dateInfo.start.getDate() + numberOfDayToAdd);
@@ -268,8 +307,7 @@ const options = reactive({
         calendarSmall.value.getApi().gotoDate(nextDay);
     },
 });
-
-const optionCalanderSmall = reactive({
+const optionCalendarSmall = reactive({
     events: [],
     plugins: [
         dayGridPlugin,
@@ -283,22 +321,34 @@ const optionCalanderSmall = reactive({
     editable: true,
     selectable: true,
     weekends: true,
+
     datesSet: function (dateInfo) {
         const numberOfDayToAdd = 10;
         const nextDay = new Date(dateInfo.start.getTime());
         nextDay.setDate(dateInfo.start.getDate() + numberOfDayToAdd);
         state.presentMonthSmall = nextDay;
     },
+
     dateClick: function (info) {
         console.log(info);
         calendar.value.getApi().gotoDate(info.dateStr);
+        setTimeout(() => {
+            //fix bug create
+            let events = document.querySelectorAll('.fc-event-title');
+            //duyet qua event, kiem tra lenght = 3 moi xu ly
+            events.forEach((item) => {
+                if (item.childNodes.length == 3) {
+                    item.childNodes[2].textContent = '';
+                }
+            });
+        }, 0);
     },
 });
 
 const router = useRouter();
 const state = reactive({
     isOpenPopupCreate: false,
-    isCloseCropCreate: true,
+    isCloseDrop: false,
     is_event: false,
     itemEvent: {},
     presentMonth: '',
@@ -353,15 +403,6 @@ const createNew = (isEvent) => {
     };
 };
 /**
- * close drop dow
- * @author Vi :3
- */
-const isCloseCropCreate = () => {
-    if ((state.isOpenPopupCreate = true)) {
-        state.isCloseCropCreate = false;
-    }
-};
-/**
  * select event
  * @author Vii
  */
@@ -376,13 +417,24 @@ const selectEvent = async () => {
                     ...item, //copy item
                     start: item.start_date,
                     end: item.end_date ? item.end_date : item.start_date,
-                    color: item.is_event ? item.color : '#3F51B5',
+                    color: item.is_event ? item.color : COLOR,
                     event_id: item.id,
                 });
             });
             state.loading = false;
             console.log(events);
             options.events = events;
+
+            setTimeout(() => {
+                //fix bug create
+                let events = document.querySelectorAll('.fc-event-title');
+                //duyet qua event, kiem tra lenght = 3 moi xu ly
+                events.forEach((item) => {
+                    if (item.childNodes.length == 3) {
+                        item.childNodes[2].textContent = '';
+                    }
+                });
+            }, 10);
         }
     );
 };
@@ -434,6 +486,16 @@ const getInfo = async () => {
 const goToDay = () => {
     calendar.value.getApi().today();
     calendarSmall.value.getApi().today();
+    setTimeout(() => {
+        //fix bug create
+        let events = document.querySelectorAll('.fc-event-title');
+        //duyet qua event, kiem tra lenght = 3 moi xu ly
+        events.forEach((item) => {
+            if (item.childNodes.length == 3) {
+                item.childNodes[2].textContent = ''; // chinh dong text thừa
+            }
+        });
+    }, 5);
 };
 const nextMonth = () => {
     calendar.value.getApi().next();
@@ -451,7 +513,7 @@ const preMonthSmall = () => {
 const choseday = () => {
     calendar.value.getApi().changeView('timeGridDay');
 };
-const chosewwek = () => {
+const chosewek = () => {
     calendar.value.getApi().changeView('timeGridWeek');
 };
 const chosemonth = () => {
@@ -460,7 +522,13 @@ const chosemonth = () => {
 const choseyear = () => {
     calendar.value.getApi().changeView('multiMonthYear');
 };
-
+const render = () => {
+    console.log('render');
+    calendar.value.getApi().destroy();
+    setTimeout(() => {
+        calendar.value.getApi().render();
+    }, 0);
+};
 onMounted(async () => {
     await getInfo();
     await selectEvent();

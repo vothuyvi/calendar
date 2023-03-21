@@ -224,6 +224,7 @@
     .container__body {
         display: flex;
         height: fit-content;
+        width: 100%;
 
         .menu {
             display: none !important;
@@ -296,8 +297,24 @@
                 &:deep(.fc-col-header) {
                     width: 100% !important;
                     margin-bottom: 1rem !important;
+                    display: none;
                 }
-
+                .container-body-right__header {
+                    display: flex;
+                    justify-content: center;
+                    font-size: 1rem;
+                    color: #70757a;
+                    table {
+                        width: 100%;
+                        border-bottom: unset;
+                        tr {
+                            width: 100%;
+                            th {
+                                width: 14.285714333%;
+                            }
+                        }
+                    }
+                }
                 &:deep(.fc-daygrid-body-unbalanced) {
                     width: -webkit-fill-available !important;
                 }
@@ -412,12 +429,34 @@
             }
         }
         .container-body__right {
-            flex: 2;
+            width: 100%;
+            .container-body-right__header {
+                display: flex;
+                justify-content: center;
+                font-size: 1.3rem;
+                color: #70757a;
+                table {
+                    width: 100%;
+                    border: 1px solid #ddd;
+                    border-bottom: unset;
+                    tr {
+                        width: 100%;
+                        th {
+                            width: 14.285714333%;
+                        }
+                    }
+                }
+            }
+
             :deep(.fc-toolbar) {
                 display: none;
             }
             &:deep(.fc-col-header) {
                 height: 3.5rem;
+                display: none;
+            }
+            &:deep(.fc-scrollgrid-liquid) {
+                border-top: unset;
             }
             &:deep(.fc-col-header-cell-cushion) {
                 padding: 1rem 0;
@@ -448,15 +487,14 @@
             }
             &:deep(.fc-day-today) {
                 background-color: white;
+                .fc-daygrid-day-number {
+                    background-color: rgb(26, 115, 232);
+                    color: white;
+                    font-weight: bold;
+                    border-radius: 50%;
+                    padding: 0.8rem 0.9rem;
+                }
             }
-            &:deep(#fc-dom-125) {
-                background-color: rgb(26, 115, 232);
-                color: white;
-                font-weight: bold;
-                border-radius: 50%;
-                padding: 0.8rem 0.9rem;
-            }
-
             &:deep(.fc-event) {
                 padding: 0.35rem;
                 margin-bottom: 0.3rem;
