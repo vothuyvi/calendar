@@ -21,6 +21,7 @@
         "@vitejs/plugin-vue": "^4.0.0",
         "moment": "^2.29.4",
         "node-sass": "^8.0.0",
+        "pinia": "^2.0.33",
         "vue": "^3.2.47",
         "vue-fullcalendar": "^1.0.9",
         "vue-router": "^4.1.6",

@@ -29,7 +29,7 @@ class EventController extends Controller
                     }
                     $startDate = new Carbon($request->datetime_start);
                     $endDate = new Carbon($request->datetime_end);
-                    $result = $endDate->gt($startDate); //Greater Than CHECK ngày có lớn hơn.
+                    $result = $endDate->gt($startDate); //Greater(gt) Than CHECK ngày có lớn hơn.
                     if (!$result) {
                         $validator->errors()->add('end_date', 'Event must end after it start');
                     }

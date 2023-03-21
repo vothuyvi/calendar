@@ -9,7 +9,7 @@
                     <img src="@/img/calendar_20_2x.png" alt="" />
                 </label>
                 <span class="container-header-left__title">Lịch</span>
-                <button @click="goToDay()">Hôm nay</button>
+                <button @click="goToDay()" class="btnToDay">Hôm nay</button>
                 <i class="fa-solid fa-angle-left" @click="preMonth()"></i>
                 <i class="fa-solid fa-angle-right" @click="nextMonth()"></i>
                 <span class="container-header-left__today">
@@ -25,7 +25,8 @@
                 <div class="container-header-right__btn-select">
                     <label for="select">
                         <div class="btn-select">
-                            Tháng <i class="fa-solid fa-caret-down"></i>
+                            {{ state.typeCalendar }}
+                            <i class="fa-solid fa-caret-down"></i>
                         </div>
                     </label>
                     <input type="checkbox" id="select" />
@@ -35,18 +36,15 @@
                             <button @click="choseday()">Ngày</button>
                         </div>
                         <div class="container-header-right-list__item">
-                            <button @click="chosewek()">Tuần</button>
+                            <button @click="choseweek()">Tuần</button>
                         </div>
                         <div class="container-header-right-list__item">
                             <button @click="chosemonth()">Tháng</button>
                         </div>
-                        <div class="container-header-right-list__item">
-                            <button @click="choseyear()">Năm</button>
-                        </div>
                     </div>
                 </div>
                 <div class="container-header-right__name-user">
-                    <span>{{ state.user.email }}</span>
+                    <span>{{ store.user?.email }}</span>
                 </div>
                 <div class="container-header-right__group-user">
                     <label for="logout">
@@ -138,7 +136,6 @@
                         <span> Lịch của tôi</span>
                         <i class="fa-solid fa-chevron-up"></i>
                     </div>
-
                     <div class="list-event__input">
                         <input
                             type="checkbox"
@@ -173,7 +170,6 @@
                         </tr>
                     </table>
                 </div>
-
                 <FullCalender
                     ref="calendar"
                     v-bind:options="options"
@@ -211,7 +207,7 @@ import Loading from '@/components/Loading.vue';
 import { useRouter } from 'vue-router';
 import Api from '@/utils/api';
 import { TOKEN_LOGIN, COLOR } from '@/const/index.js';
-
+import { useUser } from '../stores/state-user.js';
 const id = ref(10);
 const calendar = ref(null);
 const calendarSmall = ref(null);
@@ -348,7 +344,6 @@ const optionCalendarSmall = reactive({
 const router = useRouter();
 const state = reactive({
     isOpenPopupCreate: false,
-    isCloseDrop: false,
     is_event: false,
     itemEvent: {},
     presentMonth: '',
@@ -358,8 +353,9 @@ const state = reactive({
         reminder: true,
     },
     loading: false,
-    user: [],
+    typeCalendar: 'Tháng',
 });
+const store = useUser();
 
 /**
  * format month header title
@@ -401,6 +397,8 @@ const createNew = (isEvent) => {
         datetime_end: '',
         color: '',
     };
+    //xử lý click vào "tạo" để ẩn drop create new
+    document.querySelector('.container-boy-left__create').click();
 };
 /**
  * select event
@@ -416,21 +414,22 @@ const selectEvent = async () => {
                 events.push({
                     ...item, //copy item
                     start: item.start_date,
-                    end: item.end_date ? item.end_date : item.start_date,
-                    color: item.is_event ? item.color : COLOR,
+                    end: item.end_date ? item.end_date : item.start_date, // nếu có ngày kết thúc thì hiện ngày kết thúc còn kh thì hiện ngày bắt đầu
+                    color: item.is_event ? item.color : COLOR, //neu là event thì lấy item.color còn kh phải thì lấy màu mặc định (COLOR)
                     event_id: item.id,
                 });
             });
             state.loading = false;
-            console.log(events);
             options.events = events;
-
             setTimeout(() => {
                 //fix bug create
-                let events = document.querySelectorAll('.fc-event-title');
+                let events = document.querySelectorAll('.fc-event-title'); //lấy các class fc-event-title
                 //duyet qua event, kiem tra lenght = 3 moi xu ly
                 events.forEach((item) => {
                     if (item.childNodes.length == 3) {
+                        //gán cho [1] = [2] sau đó set [2] bằng ''
+                        item.childNodes[1].textContent =
+                            item.childNodes[2].textContent;
                         item.childNodes[2].textContent = '';
                     }
                 });
@@ -439,6 +438,7 @@ const selectEvent = async () => {
     );
 };
 
+//gọi lại trạng thái selectEvent khu thay đổi filter
 watch(() => state.filter.event, selectEvent);
 watch(() => state.filter.reminder, selectEvent);
 
@@ -464,7 +464,8 @@ const getTypeFilter = () => {
  */
 const logout = () => {
     Api.post('api/logout').then(() => {
-        localStorage.removeItem(TOKEN_LOGIN);
+        localStorage.removeItem(TOKEN_LOGIN); //xóa token
+        store.onUsers({}); //xóa trong pinia
         state.error = null;
         router.push({
             name: 'LoginView',
@@ -479,7 +480,7 @@ const logout = () => {
 const getInfo = async () => {
     await Api.get('api/get-info').then((response) => {
         const userData = response.data.data;
-        state.user = userData;
+        store.onUsers(userData);
     });
 };
 
@@ -495,40 +496,76 @@ const goToDay = () => {
                 item.childNodes[2].textContent = ''; // chinh dong text thừa
             }
         });
-    }, 5);
+    }, 0);
 };
+/**
+ * next month
+ * @author Vi
+ */
 const nextMonth = () => {
     calendar.value.getApi().next();
 };
+/**
+ * prev Month
+ * @author Vi
+ */
 const preMonth = () => {
     calendar.value.getApi().prev();
 };
+/**
+ * next month calendar small
+ * @author Vi
+ */
 const nextMonthSmall = () => {
     calendarSmall.value.getApi().next();
 };
+/**
+ * prev month calendar small
+ * @author Vi
+ */
 const preMonthSmall = () => {
     calendarSmall.value.getApi().prev();
 };
-
+/**
+ * change View day
+ * @author Vi
+ */
 const choseday = () => {
     calendar.value.getApi().changeView('timeGridDay');
+    state.typeCalendar = 'Ngày';
+    //click vao btn 1 lan để ẩn drop chọn ngày
+    document.querySelector('.btn-select').click();
 };
-const chosewek = () => {
+/**
+ * change view week
+ * @author Vi
+ */
+const choseweek = () => {
     calendar.value.getApi().changeView('timeGridWeek');
+    state.typeCalendar = 'Tuần';
+    //click vao btn 1 lan để ẩn drop chọn tuần
+    document.querySelector('.btn-select').click();
 };
+/**
+ * change view month
+ * @author Vi
+ */
 const chosemonth = () => {
     calendar.value.getApi().changeView('dayGridMonth');
+    //click vao btn 1 lan để ẩn drop chọn tháng
+    document.querySelector('.btn-select').click();
 };
-const choseyear = () => {
-    calendar.value.getApi().changeView('multiMonthYear');
-};
+/**
+ * render view
+ * @author Vi
+ */
 const render = () => {
-    console.log('render');
     calendar.value.getApi().destroy();
     setTimeout(() => {
         calendar.value.getApi().render();
     }, 0);
 };
+
 onMounted(async () => {
     await getInfo();
     await selectEvent();
