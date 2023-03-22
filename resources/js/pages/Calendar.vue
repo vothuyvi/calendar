@@ -33,13 +33,13 @@
                     <div class="container-header-right__list">
                         <div class="header-right-list__triangle"></div>
                         <div class="container-header-right-list__item">
-                            <button @click="choseday()">Ngày</button>
+                            <button @click="chooseDay()">Ngày</button>
                         </div>
                         <div class="container-header-right-list__item">
-                            <button @click="choseweek()">Tuần</button>
+                            <button @click="chooseWeek()">Tuần</button>
                         </div>
                         <div class="container-header-right-list__item">
-                            <button @click="chosemonth()">Tháng</button>
+                            <button @click="chooseMonth()">Tháng</button>
                         </div>
                     </div>
                 </div>
@@ -207,7 +207,7 @@ import Loading from '@/components/Loading.vue';
 import { useRouter } from 'vue-router';
 import Api from '@/utils/api';
 import { TOKEN_LOGIN, COLOR } from '@/const/index.js';
-import { useUser } from '../stores/state-user.js';
+import { useUser } from '@/stores/state-user.js';
 const id = ref(10);
 const calendar = ref(null);
 const calendarSmall = ref(null);
@@ -284,7 +284,7 @@ const options = reactive({
         }
         //fix bug create
         let events = document.querySelectorAll('.fc-event-title');
-        //duyet qua event, kiem tra lenght = 3 moi xu ly
+        //duyet qua event, kiem tra length = 3 moi xu ly
         events.forEach((item) => {
             if (item.childNodes.length == 3) {
                 item.childNodes[2].textContent = '';
@@ -504,6 +504,16 @@ const goToDay = () => {
  */
 const nextMonth = () => {
     calendar.value.getApi().next();
+    setTimeout(() => {
+        //fix bug create bỏ text thừa.
+        let events = document.querySelectorAll('.fc-event-title');
+        //duyet qua event, kiem tra lenght = 3 moi xu ly
+        events.forEach((item) => {
+            if (item.childNodes.length == 3) {
+                item.childNodes[2].textContent = ''; // chinh dong text thừa
+            }
+        });
+    }, 0);
 };
 /**
  * prev Month
@@ -530,7 +540,7 @@ const preMonthSmall = () => {
  * change View day
  * @author Vi
  */
-const choseday = () => {
+const chooseDay = () => {
     calendar.value.getApi().changeView('timeGridDay');
     state.typeCalendar = 'Ngày';
     //click vao btn 1 lan để ẩn drop chọn ngày
@@ -540,7 +550,7 @@ const choseday = () => {
  * change view week
  * @author Vi
  */
-const choseweek = () => {
+const chooseWeek = () => {
     calendar.value.getApi().changeView('timeGridWeek');
     state.typeCalendar = 'Tuần';
     //click vao btn 1 lan để ẩn drop chọn tuần
@@ -550,7 +560,7 @@ const choseweek = () => {
  * change view month
  * @author Vi
  */
-const chosemonth = () => {
+const chooseMonth = () => {
     calendar.value.getApi().changeView('dayGridMonth');
     //click vao btn 1 lan để ẩn drop chọn tháng
     document.querySelector('.btn-select').click();
