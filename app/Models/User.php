@@ -32,6 +32,7 @@ class User extends Authenticatable
     public function authAcessToken()
     {
         return $this->hasMany(OauthAccessToken::class);
+        
     }
     public function event(): \Illuminate\Database\Eloquent\Relations\belongsTo
     {

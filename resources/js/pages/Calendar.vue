@@ -304,7 +304,8 @@ const options = reactive({
                 let date = document.querySelectorAll(
                     '.fc-col-header-cell-cushion'
                 )[7];
-                date.innerHTML = `<a class="fc-col-header-cell-cushion"></a>${day[1].textContent}`;
+                console.log(date.textContent);
+                date.innerHTML = `<a class="fc-col-header-cell-cushion">${date.textContent} </a> ${day[1].textContent}`;
             } else if (state.typeCalendar == 'Tuần') {
                 document
                     .querySelectorAll('.fc-col-header-cell-cushion')
@@ -523,6 +524,13 @@ const goToDay = () => {
                 item.childNodes[2].textContent = ''; // chinh dong text thừa
             }
         });
+        document
+            .querySelectorAll('.fc-col-header-cell-cushion')
+            .forEach((item) => {
+                if (item.childNodes.length === 2) {
+                    item.childNodes[0].textContent = '';
+                }
+            });
     }, 0);
 };
 
