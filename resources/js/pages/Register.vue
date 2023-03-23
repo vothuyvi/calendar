@@ -20,18 +20,47 @@
                     class="fontAwesome"
                     placeholder=" &#xf0e0;  Enter your email"
                 />
-                <input
-                    v-model="password"
-                    type="password"
-                    class="fontAwesome"
-                    placeholder=" &#xf023;  Enter your password"
-                />
-                <input
-                    v-model="passwordconfirmation"
-                    type="password"
-                    class="fontAwesome"
-                    placeholder=" &#xf023;  Enter password confirmation"
-                />
+                <div class="input-pass">
+                    <input
+                        v-model="password"
+                        :type="show === true ? 'text' : 'password'"
+                        class="fontAwesome"
+                        placeholder=" &#xf023;  Enter your password"
+                    />
+                    <div class="show-hide__icon">
+                        <i
+                            class="fa-solid fa-eye show-icon"
+                            v-if="show"
+                            @click="show = !show"
+                        ></i>
+                        <i
+                            class="fa-solid fa-eye-slash hide-icon"
+                            v-else
+                            @click="show = !show"
+                        ></i>
+                    </div>
+                </div>
+
+                <div class="input-pass">
+                    <input
+                        v-model="passwordconfirmation"
+                        :type="show === true ? 'text' : 'password'"
+                        class="fontAwesome"
+                        placeholder=" &#xf023;  Enter password confirmation"
+                    />
+                    <div class="show-hide__icon">
+                        <i
+                            class="fa-solid fa-eye show-icon"
+                            v-if="show"
+                            @click="show = !show"
+                        ></i>
+                        <i
+                            class="fa-solid fa-eye-slash hide-icon"
+                            v-else
+                            @click="show = !show"
+                        ></i>
+                    </div>
+                </div>
             </div>
             <div class="login-body__bot">
                 <button @click="Register()">Sign Up</button>
@@ -59,6 +88,8 @@ export default {
             passwordconfirmation: '',
             error: '',
             loading: false,
+            show: false,
+            error: '',
         });
         const Register = () => {
             state.loading = true;

@@ -299,6 +299,7 @@
                     margin-bottom: 1rem !important;
                     display: none;
                 }
+
                 .container-body-right__header {
                     display: flex;
                     justify-content: center;
@@ -340,12 +341,6 @@
                     justify-content: center;
                     font-size: 1.1rem;
                 }
-                &:deep(.fc-day) {
-                    border: unset !important;
-                    cursor: pointer;
-                    border-radius: 50%;
-                }
-
                 &:deep(.fc .fc-daygrid-day-frame) {
                     height: 3rem !important;
                 }
@@ -361,6 +356,14 @@
                 &:deep(.fc-theme-standard th) {
                     border: unset !important;
                 }
+                &:deep(.fc-daygrid-day-events) {
+                    display: none;
+                }
+                &:deep(.fc-day) {
+                    border: unset !important;
+                    cursor: pointer;
+                    border-radius: 50%;
+                }
                 &:deep(.fc-day-today) {
                     background-color: rgb(26, 115, 232);
                     color: white;
@@ -368,6 +371,18 @@
                 }
                 &:deep(.fc-daygrid-day-number) {
                     margin-top: 0.5rem;
+                }
+                &:deep(.fc-day-past) {
+                    :hover {
+                        background-color: #e9e9e9;
+                        border-radius: 50%;
+                    }
+                }
+                &:deep(.fc-day-future) {
+                    :hover {
+                        background-color: #e9e9e9;
+                        border-radius: 50%;
+                    }
                 }
 
                 .container-body-left__canlendar--title {
@@ -430,28 +445,7 @@
         }
         .container-body__right {
             width: 100%;
-            .container-body-right__header {
-                display: flex;
-                justify-content: center;
-                font-size: 1.3rem;
-                color: #70757a;
-                table {
-                    width: 100%;
-                    border: 1px solid #ddd;
-                    tr {
-                        width: 100%;
-                        th {
-                            width: 14.285714333%;
-                        }
-                    }
-                }
-            }
-
             :deep(.fc-toolbar) {
-                display: none;
-            }
-            &:deep(.fc-col-header) {
-                height: 3.5rem;
                 display: none;
             }
             &:deep(.fc-scrollgrid-liquid) {
@@ -478,7 +472,6 @@
             &:deep(.fc-scrollgrid-sync-table) {
                 width: 100%;
             }
-
             &:deep(.fc-event-title) {
                 font-size: 1.3rem;
                 font-weight: bold;

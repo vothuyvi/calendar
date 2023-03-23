@@ -33,13 +33,13 @@
                     <div class="container-header-right__list">
                         <div class="header-right-list__triangle"></div>
                         <div class="container-header-right-list__item">
-                            <button @click="choseday()">Ngày</button>
+                            <button @click="chooseDay()">Ngày</button>
                         </div>
                         <div class="container-header-right-list__item">
-                            <button @click="choseweek()">Tuần</button>
+                            <button @click="chooseWeek()">Tuần</button>
                         </div>
                         <div class="container-header-right-list__item">
-                            <button @click="chosemonth()">Tháng</button>
+                            <button @click="chooseMonth()">Tháng</button>
                         </div>
                     </div>
                 </div>
@@ -116,13 +116,13 @@
                     <div class="container-body-right__header">
                         <table>
                             <tr>
-                                <th>CN</th>
                                 <th>T2</th>
                                 <th>T3</th>
                                 <th>T4</th>
                                 <th>T5</th>
                                 <th>T6</th>
                                 <th>T7</th>
+                                <th>CN</th>
                             </tr>
                         </table>
                     </div>
@@ -157,19 +157,6 @@
                 </div>
             </div>
             <div class="container-body__right">
-                <div class="container-body-right__header">
-                    <table>
-                        <tr>
-                            <th>CN</th>
-                            <th>TH 2</th>
-                            <th>TH 3</th>
-                            <th>TH 4</th>
-                            <th>TH 5</th>
-                            <th>TH 6</th>
-                            <th>TH 7</th>
-                        </tr>
-                    </table>
-                </div>
                 <FullCalender
                     ref="calendar"
                     v-bind:options="options"
@@ -197,6 +184,7 @@
 import { ref, reactive, onMounted, watch } from 'vue';
 import '@fullcalendar/core';
 import FullCalender from '@fullcalendar/vue3';
+import allLocales from '@fullcalendar/core/locales-all';
 import dayGridPlugin from '@fullcalendar/daygrid';
 import timeGridPlugin from '@fullcalendar/timegrid';
 import listGridPlugin from '@fullcalendar/list';
@@ -207,7 +195,7 @@ import Loading from '@/components/Loading.vue';
 import { useRouter } from 'vue-router';
 import Api from '@/utils/api';
 import { TOKEN_LOGIN, COLOR } from '@/const/index.js';
-import { useUser } from '../stores/state-user.js';
+import { useUser } from '@/stores/state-user.js';
 const id = ref(10);
 const calendar = ref(null);
 const calendarSmall = ref(null);
@@ -231,6 +219,8 @@ const options = reactive({
     editable: true,
     selectable: true,
     weekends: true,
+    locales: allLocales,
+    locale: 'vi',
 
     select: (arg) => {
         id.value = id.value + 1;
@@ -284,7 +274,7 @@ const options = reactive({
         }
         //fix bug create
         let events = document.querySelectorAll('.fc-event-title');
-        //duyet qua event, kiem tra lenght = 3 moi xu ly
+        //duyet qua event, kiem tra length = 3 moi xu ly
         events.forEach((item) => {
             if (item.childNodes.length == 3) {
                 item.childNodes[2].textContent = '';
@@ -317,6 +307,8 @@ const optionCalendarSmall = reactive({
     editable: true,
     selectable: true,
     weekends: true,
+    locales: allLocales,
+    locale: 'vi',
 
     datesSet: function (dateInfo) {
         const numberOfDayToAdd = 10;
@@ -428,8 +420,10 @@ const selectEvent = async () => {
                 events.forEach((item) => {
                     if (item.childNodes.length == 3) {
                         //gán cho [1] = [2] sau đó set [2] bằng ''
-                        item.childNodes[1].textContent =
-                            item.childNodes[2].textContent;
+                        if (item.childNodes[2].textContent !== '') {
+                            item.childNodes[1].textContent =
+                                item.childNodes[2].textContent;
+                        }
                         item.childNodes[2].textContent = '';
                     }
                 });
@@ -504,6 +498,16 @@ const goToDay = () => {
  */
 const nextMonth = () => {
     calendar.value.getApi().next();
+    setTimeout(() => {
+        //fix bug create bỏ text thừa.
+        let events = document.querySelectorAll('.fc-event-title');
+        //duyet qua event, kiem tra lenght = 3 moi xu ly
+        events.forEach((item) => {
+            if (item.childNodes.length == 3) {
+                item.childNodes[2].textContent = ''; // chinh dong text thừa
+            }
+        });
+    }, 0);
 };
 /**
  * prev Month
@@ -530,7 +534,7 @@ const preMonthSmall = () => {
  * change View day
  * @author Vi
  */
-const choseday = () => {
+const chooseDay = () => {
     calendar.value.getApi().changeView('timeGridDay');
     state.typeCalendar = 'Ngày';
     //click vao btn 1 lan để ẩn drop chọn ngày
@@ -540,7 +544,7 @@ const choseday = () => {
  * change view week
  * @author Vi
  */
-const choseweek = () => {
+const chooseWeek = () => {
     calendar.value.getApi().changeView('timeGridWeek');
     state.typeCalendar = 'Tuần';
     //click vao btn 1 lan để ẩn drop chọn tuần
@@ -550,7 +554,7 @@ const choseweek = () => {
  * change view month
  * @author Vi
  */
-const chosemonth = () => {
+const chooseMonth = () => {
     calendar.value.getApi().changeView('dayGridMonth');
     //click vao btn 1 lan để ẩn drop chọn tháng
     document.querySelector('.btn-select').click();

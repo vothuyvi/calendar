@@ -94,9 +94,13 @@ input {
                 }
             }
             .create-event__center--datetime {
-                margin-left: 8rem;
+                margin-left: 3rem;
                 display: flex;
-                justify-content: space-between;
+                align-items: center;
+                font-size: 2rem;
+                .fa-clock {
+                    margin-right: 2.6rem;
+                }
                 input {
                     margin-right: 2rem;
                     padding: 0.5rem;

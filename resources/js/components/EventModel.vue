@@ -42,7 +42,9 @@
                         Lời nhắc
                     </button>
                 </div>
+
                 <div class="create-event__center--datetime">
+                    <i class="fa-regular fa-clock"></i>
                     <input
                         type="datetime-local"
                         id="start"
@@ -55,8 +57,7 @@
                         id="end"
                     />
                 </div>
-                <div
-                    class="create-event__center--note"
+                <div class="create-event__center--note"
                     v-if="state.form.is_event"
                 >
                     <img src="@/img/hamburger.png" alt="" />
@@ -101,7 +102,7 @@
 
 <script setup>
 import { reactive, onMounted } from 'vue';
-import Loading from '../components/Loading.vue';
+import Loading from '@/components/Loading.vue';
 import Api from '@/utils/api';
 const emit = defineEmits(['closePopup', 'getAllEvent']); //con truyền qua cha dùng emit
 const hiheModel = () => {

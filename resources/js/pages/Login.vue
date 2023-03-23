@@ -14,25 +14,28 @@
                     class="fontAwesome"
                     placeholder=" &#xf0e0;  Enter your email"
                 />
-                <input
-                    v-model="password"
-                    :type="show === true ? 'text' : 'password'"
-                    class="fontAwesome"
-                    placeholder=" &#xf023;  Enter your password"
-                />
-                <div class="show-hide__icon">
-                    <i
-                        class="fa-solid fa-eye show-icon"
-                        v-if="show"
-                        @click="show = !show"
-                    ></i>
-                    <i
-                        class="fa-solid fa-eye-slash hide-icon"
-                        v-else
-                        @click="show = !show"
-                    ></i>
+                <div class="input-pass">
+                    <input
+                        v-model="password"
+                        :type="show === true ? 'text' : 'password'"
+                        class="fontAwesome"
+                        placeholder=" &#xf023;  Enter your password"
+                    />
+                    <div class="show-hide__icon">
+                        <i
+                            class="fa-solid fa-eye show-icon"
+                            v-if="show"
+                            @click="show = !show"
+                        ></i>
+                        <i
+                            class="fa-solid fa-eye-slash hide-icon"
+                            v-else
+                            @click="show = !show"
+                        ></i>
+                    </div>
                 </div>
             </div>
+
             <div class="login-body__bot">
                 <button @click="Login()">Sign In</button>
                 <div class="login-body-bot__signup">
@@ -68,8 +71,9 @@ export default {
             //  lay data tu 2 input email va pass
             // goi axios gui data len api login
             // lay du lieu tra ve tu axios
+
             state.loading = true;
-            Api.post(import.meta.env.VITE_API_PUBLIC_KEY + 'api/login', {
+            Api.post('api/login', {
                 email: state.email,
                 password: state.password,
             })
@@ -94,6 +98,7 @@ export default {
                     state.loading = false;
                 });
         };
+
         return { ...toRefs(state), Login };
     },
 };
