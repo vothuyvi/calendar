@@ -37,9 +37,9 @@
             </div>
 
             <div class="login-body__bot">
-                <button @click="Login()">Sign In</button>
+                <button @click="login()">Sign In</button>
                 <div class="login-body-bot__signup">
-                    <router-link :to="{ name: 'ResisgerView' }"
+                    <router-link :to="{ name: 'RegisterView' }"
                         ><span>Create your account?</span>
                     </router-link>
                 </div>
@@ -67,7 +67,11 @@ export default {
             error: '',
             loading: false,
         });
-        const Login = () => {
+        /**
+         * login 
+         * @author Vii :3
+         */
+        const login = () => {
             //  lay data tu 2 input email va pass
             // goi axios gui data len api login
             // lay du lieu tra ve tu axios
@@ -99,7 +103,7 @@ export default {
                 });
         };
 
-        return { ...toRefs(state), Login };
+        return { ...toRefs(state), login };
     },
 };
 </script>

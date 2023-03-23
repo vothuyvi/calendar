@@ -1,3 +1,4 @@
+
 <?php
 
 use App\Http\Controllers\UserController;
@@ -13,7 +14,7 @@ Route::group(['namespace' => 'App\Http\Controllers'], function()
     
     Route::group(['middleware' => 'auth:api'], function () {
     
-        Route::post('add-event','EventController@addevent');
+        Route::post('add-event','EventController@addEvent');
         Route::get('select-event','EventController@selectEvent');
         Route::post('delete-event','EventController@deleteEvent');
         Route::post('logout', 'UserController@logout');

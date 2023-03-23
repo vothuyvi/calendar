@@ -43,27 +43,27 @@
 
                 <div class="input-pass">
                     <input
-                        v-model="passwordconfirmation"
-                        :type="show === true ? 'text' : 'password'"
+                        v-model="password_confirmation"
+                        :type="showConirm === true ? 'text' : 'password'"
                         class="fontAwesome"
                         placeholder=" &#xf023;  Enter password confirmation"
                     />
                     <div class="show-hide__icon">
                         <i
                             class="fa-solid fa-eye show-icon"
-                            v-if="show"
-                            @click="show = !show"
+                            v-if="showConirm"
+                            @click="showConirm = !showConirm"
                         ></i>
                         <i
                             class="fa-solid fa-eye-slash hide-icon"
                             v-else
-                            @click="show = !show"
+                            @click="showConirm = !showConirm"
                         ></i>
                     </div>
                 </div>
             </div>
             <div class="login-body__bot">
-                <button @click="Register()">Sign Up</button>
+                <button @click="register()">Sign Up</button>
                 <div class="login-body-bot__signup"></div>
             </div>
         </div>
@@ -85,18 +85,23 @@ export default {
         const state = reactive({
             email: '',
             password: '',
-            passwordconfirmation: '',
+            password_confirmation: '',
             error: '',
             loading: false,
             show: false,
+            showConirm: false,
             error: '',
         });
-        const Register = () => {
+        /**
+         * register
+         * @author Vi :3
+         */
+        const register = () => {
             state.loading = true;
             Api.post('api/register', {
                 email: state.email,
                 password: state.password,
-                passwordconfirmation: state.passwordconfirmation,
+                password_confirmation: state.password_confirmation,
             })
                 .then((response) => {
                     const {
@@ -116,7 +121,7 @@ export default {
                     state.loading = false;
                 });
         };
-        return { ...toRefs(state), Register };
+        return { ...toRefs(state), register };
     },
 };
 </script>

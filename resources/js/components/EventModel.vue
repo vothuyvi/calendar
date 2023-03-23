@@ -3,7 +3,7 @@
         <div class="create__event">
             <div class="create-event__top">
                 <i class="fa-solid fa-grip-lines"></i>
-                <i class="fa-solid fa-xmark" @click="hiheModel()"></i>
+                <i class="fa-solid fa-xmark" @click="hideModel()"></i>
             </div>
             <div class="create-event__center">
                 <div class="create-event__center--title">
@@ -57,7 +57,8 @@
                         id="end"
                     />
                 </div>
-                <div class="create-event__center--note"
+                <div
+                    class="create-event__center--note"
                     v-if="state.form.is_event"
                 >
                     <img src="@/img/hamburger.png" alt="" />
@@ -75,12 +76,21 @@
                 >
                     <i class="fa-regular fa-calendar"></i>
                     <div class="create-event-center-color__chose">
-                        <input
-                            v-model="state.form.color"
-                            class="color fontAwesome"
-                            type="color"
-                        />
-                        <i class="fa-solid fa-caret-down"></i>
+                        <label for="color">
+                            <div class="group-choose-color">
+                                <div
+                                    class="input-color"
+                                    :style="{
+                                        backgroundColor: state.form.color,
+                                    }"
+                                ></div>
+                                <i class="fa-solid fa-caret-down"></i>
+                            </div>
+                        </label>
+                        <input type="checkbox" id="color" class="checkColor" />
+                        <div class="color">
+                            <input v-model="state.form.color" type="color" />
+                        </div>
                     </div>
                 </div>
                 <hr v-if="state.form.is_event" />
@@ -105,7 +115,7 @@ import { reactive, onMounted } from 'vue';
 import Loading from '@/components/Loading.vue';
 import Api from '@/utils/api';
 const emit = defineEmits(['closePopup', 'getAllEvent']); //con truyền qua cha dùng emit
-const hiheModel = () => {
+const hideModel = () => {
     emit('closePopup');
 };
 
@@ -115,16 +125,18 @@ const props = defineProps({
         type: Object,
         required: true,
     },
-    eventget: {
+    eventGet: {
         type: Object,
         required: true,
         default: '',
     },
 });
+
 onMounted(() => {
     //lay all trong props
-    state.form = props.eventget;
+    state.form = props.eventGet;
 });
+
 const state = reactive({
     form: {
         id: '',
@@ -139,6 +151,7 @@ const state = reactive({
     success: '',
     loading: false,
 });
+
 /**
  *check Validator trên font end
  * @author Vi :3
@@ -160,6 +173,7 @@ const checkValidator = () => {
     state.error = error;
     return check;
 };
+
 /**
  * add event
  * @author Vi
@@ -187,6 +201,7 @@ const addEvent = () => {
             });
     }
 };
+
 /**
  * delete Event
  * @author Vi

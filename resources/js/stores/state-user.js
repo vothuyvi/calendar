@@ -4,7 +4,11 @@ export const useUser = defineStore('userId', {
         user: {},
     }),
     actions: {
-        onUsers(data) {
+        /**
+         * setDataUser set data user
+         * @author: Vii :3
+         */
+        setDataUser(data) {
             this.user = data;
         },
     },

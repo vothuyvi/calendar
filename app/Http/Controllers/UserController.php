@@ -18,13 +18,13 @@ class UserController extends Controller {
           $user = Auth()->User();
           $token = $user->createToken('MyApp');
           $data=['user' => $user, 'token'=> $token];
-          $messge="Đăng nhập thành công";
-          return ResponseApi::success($data, $messge);
+          $message="Đăng nhập thành công";
+          return ResponseApi::success($data, $message);
       }
       else 
       {
-        $messge="Username or password wrong";
-        return ResponseApi::fails($messge, 401);
+        $message="Username or password wrong";
+        return ResponseApi::fails($message, 401);
       }
     } catch (\Exception $e) {
       return ResponseApi::fails("Server Error!");
@@ -39,7 +39,7 @@ class UserController extends Controller {
       $validator = \Validator::make($request->all(), [
         'email'=> 'required|email',
         'password' => 'required|min:8|max:16',
-        'passwordconfirmation' => 'required|same:password',
+        'password_confirmation' => 'required|same:password',
       ]);
       $validator->after(function($validator) use ($request) {
         $userItem = User::where('email', $request->email)->first();
@@ -56,8 +56,8 @@ class UserController extends Controller {
         $user->email = $request->email;
         $user->password = Hash::make($request->password);
         $user->save();
-        $msg="Register success !";
-        return ResponseApi::notifis($msg);
+        $message="Register success !";
+        return ResponseApi::notifis($message);
       }
     }catch(\Exception $e) {
       return ResponseApi::fails("Server Error!");
@@ -72,8 +72,8 @@ class UserController extends Controller {
   {
     if (Auth()->check()) {
        \request()->user()->token()->revoke();
-        $messge="success";
-       return ResponseApi::notifis($messge);
+        $message="success";
+       return ResponseApi::notifis($message);
     }
   }
 

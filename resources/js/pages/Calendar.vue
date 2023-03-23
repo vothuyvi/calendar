@@ -68,19 +68,25 @@
         <div class="container__body">
             <input type="checkbox" id="menu" class="menu" />
             <div class="container-body__left">
-                <label for="insert">
-                    <div class="container-boy-left__create">
-                        <svg width="36" height="36" viewBox="0 0 36 36">
-                            <path fill="#34A853" d="M16 16v14h4V20z"></path>
-                            <path fill="#4285F4" d="M30 16H20l-4 4h14z"></path>
-                            <path fill="#FBBC05" d="M6 16v4h10l4-4z"></path>
-                            <path fill="#EA4335" d="M20 16V6h-4v14z"></path>
-                            <path fill="none" d="M0 0h36v36H0z"></path>
-                        </svg>
-                        <span>Tạo</span>
-                        <i class="fa-solid fa-caret-down"></i>
-                    </div>
-                </label>
+                <div class="container-boy-left__create">
+                    <label for="insert">
+                        <div class="create">
+                            <svg width="36" height="36" viewBox="0 0 36 36">
+                                <path fill="#34A853" d="M16 16v14h4V20z"></path>
+                                <path
+                                    fill="#4285F4"
+                                    d="M30 16H20l-4 4h14z"
+                                ></path>
+                                <path fill="#FBBC05" d="M6 16v4h10l4-4z"></path>
+                                <path fill="#EA4335" d="M20 16V6h-4v14z"></path>
+                                <path fill="none" d="M0 0h36v36H0z"></path>
+                            </svg>
+                            <span>Tạo</span>
+                            <i class="fa-solid fa-caret-down"></i>
+                        </div>
+                    </label>
+                </div>
+
                 <input type="checkbox" name="" id="insert" class="insert" />
                 <div class="container-body-left__drop-insert">
                     <div
@@ -168,7 +174,7 @@
         <event-model
             v-if="state.isOpenPopupCreate"
             :options="options"
-            :eventget="state.itemEvent"
+            :event-get="state.itemEvent"
             @close-popup="state.isOpenPopupCreate = false"
             @get-all-event="selectEvent()"
         />
@@ -291,8 +297,28 @@ const options = reactive({
         state.presentMonth = nextDay;
         state.presentMonthSmall = nextDay;
         calendarSmall.value.getApi().gotoDate(nextDay);
+
+        setTimeout(() => {
+            if (state.typeCalendar == 'Ngày') {
+                let day = document.querySelectorAll('.fc-toolbar-title');
+                let date = document.querySelectorAll(
+                    '.fc-col-header-cell-cushion'
+                )[7];
+                date.innerHTML = `<a class="fc-col-header-cell-cushion"></a>${day[1].textContent}`;
+            } else if (state.typeCalendar == 'Tuần') {
+                document
+                    .querySelectorAll('.fc-col-header-cell-cushion')
+                    .forEach((item) => {
+                        if (item.childNodes.length === 3) {
+                            item.childNodes[1].remove();
+                            item.childNodes[0].remove();
+                        }
+                    });
+            }
+        }, 0);
     },
 });
+
 const optionCalendarSmall = reactive({
     events: [],
     plugins: [
@@ -374,6 +400,7 @@ const renderTitle = (presentDate) => {
     }
     return '';
 };
+
 /**
  * create new
  * @author Vi :3
@@ -390,8 +417,9 @@ const createNew = (isEvent) => {
         color: '',
     };
     //xử lý click vào "tạo" để ẩn drop create new
-    document.querySelector('.container-boy-left__create').click();
+    document.querySelector('.create').click();
 };
+
 /**
  * select event
  * @author Vii
@@ -452,6 +480,7 @@ const getTypeFilter = () => {
     }
     return 3;
 };
+
 /**
  * logout
  * @author Vi
@@ -459,7 +488,7 @@ const getTypeFilter = () => {
 const logout = () => {
     Api.post('api/logout').then(() => {
         localStorage.removeItem(TOKEN_LOGIN); //xóa token
-        store.onUsers({}); //xóa trong pinia
+        store.setDataUser({}); //xóa trong pinia
         state.error = null;
         router.push({
             name: 'LoginView',
@@ -474,10 +503,14 @@ const logout = () => {
 const getInfo = async () => {
     await Api.get('api/get-info').then((response) => {
         const userData = response.data.data;
-        store.onUsers(userData);
+        store.setDataUser(userData);
     });
 };
 
+/**
+ * goToDay
+ * @author Vii :3
+ */
 const goToDay = () => {
     calendar.value.getApi().today();
     calendarSmall.value.getApi().today();
@@ -492,6 +525,7 @@ const goToDay = () => {
         });
     }, 0);
 };
+
 /**
  * next month
  * @author Vi
@@ -509,6 +543,7 @@ const nextMonth = () => {
         });
     }, 0);
 };
+
 /**
  * prev Month
  * @author Vi
@@ -516,6 +551,7 @@ const nextMonth = () => {
 const preMonth = () => {
     calendar.value.getApi().prev();
 };
+
 /**
  * next month calendar small
  * @author Vi
@@ -523,6 +559,7 @@ const preMonth = () => {
 const nextMonthSmall = () => {
     calendarSmall.value.getApi().next();
 };
+
 /**
  * prev month calendar small
  * @author Vi
@@ -530,6 +567,7 @@ const nextMonthSmall = () => {
 const preMonthSmall = () => {
     calendarSmall.value.getApi().prev();
 };
+
 /**
  * change View day
  * @author Vi
@@ -540,6 +578,7 @@ const chooseDay = () => {
     //click vao btn 1 lan để ẩn drop chọn ngày
     document.querySelector('.btn-select').click();
 };
+
 /**
  * change view week
  * @author Vi
@@ -550,15 +589,18 @@ const chooseWeek = () => {
     //click vao btn 1 lan để ẩn drop chọn tuần
     document.querySelector('.btn-select').click();
 };
+
 /**
  * change view month
  * @author Vi
  */
 const chooseMonth = () => {
     calendar.value.getApi().changeView('dayGridMonth');
+    state.typeCalendar = 'Tháng';
     //click vao btn 1 lan để ẩn drop chọn tháng
     document.querySelector('.btn-select').click();
 };
+
 /**
  * render view
  * @author Vi

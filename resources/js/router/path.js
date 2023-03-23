@@ -21,7 +21,7 @@ const path = [
             },
             {
                 path: 'register',
-                name: 'ResisgerView',
+                name: 'RegisterView',
                 component: Register,
             },
             {

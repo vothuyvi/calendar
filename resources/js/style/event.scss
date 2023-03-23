@@ -141,23 +141,31 @@ input {
                     &:hover {
                         background-color: #e3e0e0;
                     }
-                    input {
-                        border: 0;
-                        background-color: white;
-                        padding: 1rem;
+                    .group-choose-color {
                         display: flex;
-                        align-items: center;
-                        &.color {
-                            display: inline-block;
-                            margin-right: 2rem;
-                            background-color: rgb(3, 155, 229);
+                        .input-color {
+                            width: 2.1rem;
+                            height: 2.1rem;
                             border-radius: 50%;
-                            width: 1.8rem;
-                            height: 1.8rem;
+                            background-color: rgb(25, 135, 231);
+                            margin-right: 2rem;
                         }
-                        & .fontAwesome {
-                            font-family: Helvetica, 'FontAwesome', sans-serif;
+                    }
+
+                    .checkColor {
+                        display: none;
+                    }
+                    input {
+                        &:checked {
+                            + .color {
+                                display: block !important;
+                            }
                         }
+                    }
+                    .color {
+                        display: inline-block;
+                        margin-left: 2rem;
+                        display: none;
                     }
                 }
             }
@@ -181,7 +189,6 @@ input {
                 }
             }
             .create-event__bot--btnDelete {
-                // background-color: #f35b5b;
                 background-color: red;
             }
         }

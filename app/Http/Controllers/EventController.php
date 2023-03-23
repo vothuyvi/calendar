@@ -17,9 +17,10 @@ class EventController extends Controller
     public function addEvent (Request $request) {
          try {
             $validator =\Validator::make($request->all(),[
-                'title'=>'required',
+                'title'=>'required|max:191',
                 'datetime_start'=>'required',
-            
+                // 'description'=>'required|max:191', 
+             
             ]);
             $validator->after(function($validator) use ($request){
 
@@ -34,7 +35,8 @@ class EventController extends Controller
                         $validator->errors()->add('end_date', 'Event must end after it start');
                     }
                 }
-                
+        
+             
             });
             if($validator->fails()){
                 return ResponseApi::errors($validator->errors());
@@ -73,12 +75,13 @@ class EventController extends Controller
         $events = Event::where('user_id', $userId)->get();
 
         // check filter event or reminder
-        if ($request->type != '2') 
+        $BOOTH_EVENT_AND_REMIND ='2';
+        if ($request->type != $BOOTH_EVENT_AND_REMIND) 
         {
             $events = Event::where('is_event', $request->type)->where('user_id', $userId)->get();
         } 
-        $messge="yes";
-        return ResponseApi::success($events, $messge);
+        $message="yes";
+        return ResponseApi::success($events, $message);
 
         
     }
