@@ -373,15 +373,26 @@
                 &:deep(.fc-daygrid-day-number) {
                     margin-top: 0.5rem;
                 }
+                &:deep(.fc-daygrid-day-bg) {
+                    display: none !important;
+                }
                 &:deep(.fc-day-past) {
                     :hover {
+                        border-radius: 50%;
                         background-color: #e9e9e9;
+                    }
+                    :active {
+                        background-color: rgb(162, 224, 241);
                         border-radius: 50%;
                     }
                 }
                 &:deep(.fc-day-future) {
                     :hover {
                         background-color: #e9e9e9;
+                        border-radius: 50%;
+                    }
+                    :active {
+                        background-color: rgb(162, 224, 241);
                         border-radius: 50%;
                     }
                 }
