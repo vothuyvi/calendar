@@ -1,14 +1,14 @@
 .body {
+    position: fixed;
     display: flex;
     justify-content: center;
     align-items: center;
     flex-direction: column;
     background-color: #b2ebf2;
     width: 100%;
-    height: 71.5rem;
+    height: 100%;
     color: rgb(220, 89, 89);
     font-weight: bold;
-
     .title {
         font-size: 13rem;
     }

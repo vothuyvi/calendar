@@ -305,7 +305,7 @@ const options = reactive({
                     '.fc-col-header-cell-cushion'
                 )[7];
                 console.log(date.textContent);
-                date.innerHTML = `<a class="fc-col-header-cell-cushion">${date.textContent} ${day[1].textContent}</a> `;
+                date.innerHTML = `<a class="fc-col-header-cell-cushion">${date.textContent}  </a> ${day[1].textContent} `;
             } else if (state.typeCalendar == 'Tuần') {
                 document
                     .querySelectorAll('.fc-col-header-cell-cushion')

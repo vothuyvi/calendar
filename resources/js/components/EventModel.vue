@@ -21,8 +21,7 @@
                     <input
                         v-model="state.form.title"
                         type="text"
-                        name=""
-                        id=""
+                        maxlength="192"
                         placeholder="Thêm tiêu đề và thời gian"
                     />
                 </div>
@@ -64,6 +63,7 @@
                     <img src="@/img/hamburger.png" alt="" />
                     <textarea
                         v-model="state.form.description"
+                        maxlength="192"
                         placeholder="Thêm mô tả"
                         rows="1"
                         cols="30"
@@ -76,21 +76,18 @@
                 >
                     <i class="fa-regular fa-calendar"></i>
                     <div class="create-event-center-color__chose">
-                        <label for="color">
-                            <div class="group-choose-color">
-                                <div
-                                    class="input-color"
-                                    :style="{
-                                        backgroundColor: state.form.color,
-                                    }"
-                                ></div>
-                                <i class="fa-solid fa-caret-down"></i>
-                            </div>
+                        <label for="input-color">
+                            <input
+                                v-model="state.form.color"
+                                type="color"
+                                class="color"
+                                id="input-color"
+                                :style="{
+                                    backgroundColor: state.form.color,
+                                }"
+                            />
+                            <i class="fa-solid fa-caret-down"></i>
                         </label>
-                        <input type="checkbox" id="color" class="checkColor" />
-                        <div class="color">
-                            <input v-model="state.form.color" type="color" />
-                        </div>
                     </div>
                 </div>
                 <hr v-if="state.form.is_event" />
@@ -115,6 +112,11 @@ import { reactive, onMounted } from 'vue';
 import Loading from '@/components/Loading.vue';
 import Api from '@/utils/api';
 const emit = defineEmits(['closePopup', 'getAllEvent']); //con truyền qua cha dùng emit
+
+/**
+ * hideModel: close Popup
+ * @author Vi :3
+ */
 const hideModel = () => {
     emit('closePopup');
 };
