@@ -10,10 +10,7 @@
                     <div v-if="state.success" class="success"></div>
                     <div v-if="state.error" class="error">
                         <div v-for="(key, value) in state.error" :key="key">
-                            <div
-                                v-for="(item, index) in state.error[value]"
-                                :key="index"
-                            >
+                            <div v-for="(item, index) in state.error[value]" :key="index">
                                 {{ item }}
                             </div>
                         </div>
